@@ -1,0 +1,408 @@
+/* Design orientiert an artbasel.com: viel Weißraum, klare Grotesk-Typografie,
+   monochrom (Schwarz/Weiß/Grau), keine Rundungen, keine Boxen um Bilder,
+   kleine getrackte Uppercase-Labels statt Farbakzente. */
+
+:root {
+  --bg: #ffffff;
+  --ink: #0a0a0a;
+  --ink-soft: #767676;
+  --line: #e6e6e6;
+  --accent: #0a0a0a;
+  --card-bg: #ffffff;
+  --serif: 'Georgia', 'Times New Roman', serif;
+  --sans: 'Helvetica Neue', Helvetica, Arial, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+}
+
+.page {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 32px 24px 120px;
+}
+
+.masthead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 18px;
+  margin-bottom: 56px;
+}
+
+.masthead-left {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}
+
+.primary-nav {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.primary-nav a {
+  text-decoration: none;
+}
+
+.primary-nav a:hover {
+  color: var(--ink);
+}
+
+.masthead .brand {
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+
+.masthead .brand span {
+  color: var(--ink-soft);
+  font-weight: 400;
+}
+
+.eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 14px;
+  font-weight: 600;
+}
+
+h1.title {
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 44px;
+  letter-spacing: -0.01em;
+  line-height: 1.08;
+  margin: 0 0 10px;
+}
+
+.subtitle {
+  color: var(--ink-soft);
+  margin: 0 0 48px;
+  font-size: 16px;
+  max-width: 640px;
+}
+
+.section-title {
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin: 64px 0 24px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 32px 28px;
+}
+
+.card {
+  background: transparent;
+  border: none;
+  overflow: hidden;
+}
+
+.card-image {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  display: block;
+  background: #f0f0f0;
+}
+
+.card-body {
+  padding: 14px 0 0;
+}
+
+.card-number {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 4px;
+}
+
+.card-title {
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 16px;
+  margin: 0 0 4px;
+  letter-spacing: -0.005em;
+}
+
+.card-meta {
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+
+.badge {
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: var(--ink);
+  color: var(--bg);
+  padding: 4px 9px;
+}
+
+.form-card {
+  background: var(--card-bg);
+  border: 1px solid var(--line);
+  padding: 40px;
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.field {
+  margin-bottom: 20px;
+}
+
+.field label {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.field input,
+.field select {
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid var(--line);
+  border-radius: 0;
+  background: #fff;
+  font-size: 15px;
+  font-family: var(--sans);
+  color: var(--ink);
+}
+
+.field input:focus,
+.field select:focus {
+  outline: none;
+  border-color: var(--ink);
+}
+
+button.btn,
+.btn {
+  display: inline-block;
+  background: var(--ink);
+  color: var(--bg);
+  border: none;
+  border-radius: 0;
+  padding: 13px 24px;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: opacity 0.15s ease;
+}
+
+button.btn:hover,
+.btn:hover {
+  opacity: 0.75;
+}
+
+.error-msg {
+  color: #b0281a;
+  font-size: 13px;
+  margin-bottom: 20px;
+}
+
+table.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  background: var(--card-bg);
+}
+
+table.data-table th,
+table.data-table td {
+  text-align: left;
+  padding: 14px 12px;
+  border-bottom: 1px solid var(--line);
+}
+
+table.data-table th {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  font-weight: 600;
+}
+
+.tabs {
+  display: flex;
+  gap: 28px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 0;
+}
+
+.tab {
+  display: inline-block;
+  padding: 0 0 14px;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+
+.tab:hover {
+  color: var(--ink);
+}
+
+.tab.active {
+  color: var(--ink);
+  border-bottom-color: var(--ink);
+  font-weight: 700;
+}
+
+.empty-state {
+  color: var(--ink-soft);
+  font-size: 14px;
+  padding: 32px 0;
+}
+
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+}
+
+.user-menu {
+  position: relative;
+}
+
+.user-menu-trigger {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+}
+
+.user-menu-name {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.user-menu-trigger:hover .user-menu-name {
+  color: var(--ink);
+}
+
+.user-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--bg);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  flex-shrink: 0;
+}
+
+.user-menu-dropdown {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  min-width: 180px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+}
+
+.user-menu-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--line);
+  padding: 12px 16px;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink);
+  cursor: pointer;
+  font-family: var(--sans);
+}
+
+.user-menu-item:last-child {
+  border-bottom: none;
+}
+
+.user-menu-item:hover {
+  background: var(--ink);
+  color: var(--bg);
+}
+
+@media (max-width: 720px) {
+  .two-col {
+    grid-template-columns: 1fr;
+  }
+  .masthead {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .masthead-left {
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  h1.title {
+    font-size: 32px;
+  }
+}
