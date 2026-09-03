@@ -5,15 +5,16 @@ import { useState } from 'react';
 export default function SettingsForm({
   initial,
 }: {
-  initial: { prefEmail: boolean; prefPhone: boolean };
+  initial: { prefEmail: boolean; prefPhone: boolean; prefNewsEmail: boolean };
 }) {
   const [prefEmail, setPrefEmail] = useState(initial.prefEmail);
   const [prefPhone, setPrefPhone] = useState(initial.prefPhone);
+  const [prefNewsEmail, setPrefNewsEmail] = useState(initial.prefNewsEmail);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function save(next: { prefEmail: boolean; prefPhone: boolean }) {
+  async function save(next: { prefEmail: boolean; prefPhone: boolean; prefNewsEmail: boolean }) {
     setSaving(true);
     setError(null);
     setSaved(false);
@@ -24,6 +25,7 @@ export default function SettingsForm({
         body: JSON.stringify({
           pref_contact_email: next.prefEmail,
           pref_contact_phone: next.prefPhone,
+          pref_news_email: next.prefNewsEmail,
         }),
       });
       if (!res.ok) {
@@ -55,7 +57,7 @@ export default function SettingsForm({
             checked={prefEmail}
             onChange={(e) => {
               setPrefEmail(e.target.checked);
-              save({ prefEmail: e.target.checked, prefPhone });
+              save({ prefEmail: e.target.checked, prefPhone, prefNewsEmail });
             }}
             disabled={saving}
           />
@@ -74,7 +76,28 @@ export default function SettingsForm({
             checked={prefPhone}
             onChange={(e) => {
               setPrefPhone(e.target.checked);
-              save({ prefEmail, prefPhone: e.target.checked });
+              save({ prefEmail, prefPhone: e.target.checked, prefNewsEmail });
+            }}
+            disabled={saving}
+          />
+          <span className="switch-track" />
+        </label>
+      </div>
+
+      <div className="toggle-row">
+        <div>
+          <div className="toggle-row-label">Notify me about new News posts</div>
+          <div className="toggle-row-hint">
+            Receive an email whenever the artist publishes a new News update.
+          </div>
+        </div>
+        <label className="switch">
+          <input
+            type="checkbox"
+            checked={prefNewsEmail}
+            onChange={(e) => {
+              setPrefNewsEmail(e.target.checked);
+              save({ prefEmail, prefPhone, prefNewsEmail: e.target.checked });
             }}
             disabled={saving}
           />

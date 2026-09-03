@@ -11,13 +11,22 @@ type NewsPost = {
   posted_at: string;
 };
 
+function toDateInputValue(value: string | Date): string {
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return '';
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
 export default function NewsPostRow({ post }: { post: NewsPost }) {
   const router = useRouter();
   const [editing, setEditing] = useState(false);
   const [title, setTitle] = useState(post.title || '');
   const [content, setContent] = useState(post.content);
   const [imageUrl, setImageUrl] = useState(post.image_url || '');
-  const [postedAt, setPostedAt] = useState(post.posted_at.slice(0, 10));
+  const [postedAt, setPostedAt] = useState(toDateInputValue(post.posted_at));
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

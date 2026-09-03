@@ -85,8 +85,7 @@ export default async function CollectorPage() {
     `SELECT id, name, venue, city, country, duration, year, hero_image_url, exhibition_type
      FROM public.exhibitions
      WHERE published = true
-     ORDER BY created_at DESC
-     LIMIT 8`
+     ORDER BY created_at DESC`
   );
 
   const generalExhibitions = otherExhibitions.filter((e) => !relatedIds.has(e.id)).slice(0, 6);
@@ -108,31 +107,35 @@ export default async function CollectorPage() {
         <UserMenu name={displayName} />
       </header>
 
-      <div className="eyebrow">Collector Area</div>
-      <h1 className="title">My Collection</h1>
-      <p className="subtitle">
-        {artworks.length === 0
-          ? 'No artworks are linked to your account yet.'
-          : `${artworks.length} piece${artworks.length === 1 ? '' : 's'} in your possession.`}
-      </p>
+      <div className="collection-header">
+        <div className="collection-header-text">
+          <div className="eyebrow">Collector Area</div>
+          <h1 className="title">My Collection</h1>
+          <p className="subtitle">
+            {artworks.length === 0
+              ? 'No artworks are linked to your account yet.'
+              : `${artworks.length} piece${artworks.length === 1 ? '' : 's'} in your possession.`}
+          </p>
+        </div>
 
-      <div className="stats-bar">
-        <div className="stat-label">My Holdings</div>
-        <div className="stat-item stat-highlight">
-          <div className="stat-value">{uniqueCount}</div>
-          <div className="stat-name">Unique Artwork{uniqueCount === 1 ? '' : 's'}</div>
-        </div>
-        <div className="stat-item">
-          <div className="stat-value">{limitedCount}</div>
-          <div className="stat-name">Limited Edition{limitedCount === 1 ? '' : 's'}</div>
-        </div>
-        <div className="stat-item">
-          <div className="stat-value">{objectsCount}</div>
-          <div className="stat-name">Object{objectsCount === 1 ? '' : 's'}</div>
-        </div>
-        <div className="stat-item">
-          <div className="stat-value">{fashionCount}</div>
-          <div className="stat-name">Fashion Item{fashionCount === 1 ? '' : 's'}</div>
+        <div className="stats-bar">
+          <div className="stat-label">My Holdings</div>
+          <div className="stat-item stat-highlight">
+            <div className="stat-value">{uniqueCount}</div>
+            <div className="stat-name">Unique Artwork{uniqueCount === 1 ? '' : 's'}</div>
+          </div>
+          <div className="stat-item">
+            <div className="stat-value">{limitedCount}</div>
+            <div className="stat-name">Limited Edition{limitedCount === 1 ? '' : 's'}</div>
+          </div>
+          <div className="stat-item stat-muted">
+            <div className="stat-value">{objectsCount}</div>
+            <div className="stat-name">Object{objectsCount === 1 ? '' : 's'}</div>
+          </div>
+          <div className="stat-item stat-muted">
+            <div className="stat-value">{fashionCount}</div>
+            <div className="stat-name">Fashion Item{fashionCount === 1 ? '' : 's'}</div>
+          </div>
         </div>
       </div>
 

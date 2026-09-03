@@ -6,6 +6,7 @@ import UserMenu from '../components/UserMenu';
 import OwnershipRow from '../components/OwnershipRow';
 import NewGalleryForm from '../components/NewGalleryForm';
 import AdminNav from '../components/AdminNav';
+import GalleryPartnerList from '../components/GalleryPartnerList';
 
 type ActiveOwnership = {
   ownership_id: number;
@@ -14,6 +15,7 @@ type ActiveOwnership = {
   contact_email: string | null;
   archive_number: string;
   artwork_name: string;
+  artwork_image: string | null;
   edition_number: string | null;
   acquired_at: string;
 };
@@ -32,12 +34,13 @@ export default async function AdminPage({
 
   const ownerships = await query<ActiveOwnership>(
     `SELECT o.id AS ownership_id, c.id AS contact_id, c.name AS contact_name, c.email AS contact_email,
-            o.archive_number, a.name AS artwork_name, o.edition_number, o.acquired_at
+            o.archive_number, a.name AS artwork_name, a.featured_image_url AS artwork_image,
+            o.edition_number, o.acquired_at
      FROM public.ownerships o
      JOIN public.contacts c ON c.id = o.contact_id
      JOIN public.artworks a ON a.archive_number = o.archive_number
      WHERE o.transferred_at IS NULL AND ${typeFilter}
-     ORDER BY o.acquired_at DESC`
+     ORDER BY c.name ASC, o.acquired_at DESC`
   );
 
   const [{ count: artworkCount }] = await query<{ count: string }>(
@@ -92,11 +95,13 @@ export default async function AdminPage({
         <div className="empty-state">
           {activeTab === 'gallery' ? 'Noch keiner Gallery Kunstwerke zugeordnet.' : 'Noch keine Kunstwerke zugeordnet.'}
         </div>
+      ) : activeTab === 'gallery' ? (
+        <GalleryPartnerList ownerships={ownerships} />
       ) : (
         <table className="data-table">
           <thead>
             <tr>
-              <th>{activeTab === 'gallery' ? 'Gallery' : 'Sammler'}</th>
+              <th>Sammler</th>
               <th>Archive Nr.</th>
               <th>Werk</th>
               <th>Edition</th>

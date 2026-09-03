@@ -105,11 +105,10 @@ export default async function ExclusivePage() {
                     <span />
                   )}
                   <Link
-                    href={`/collector/connect-art?archive_number=${encodeURIComponent(
+                    href={`/collector/inquire?archive_number=${encodeURIComponent(
                       art.archive_number
                     )}&name=${encodeURIComponent(art.name)}`}
-                    className="btn"
-                    style={{ padding: '9px 16px', fontSize: 11 }}
+                    className="btn-subtle"
                   >
                     Inquire
                   </Link>

@@ -3,19 +3,26 @@ import Link from 'next/link';
 import { getServerSession, getSessionDisplayName } from '../../../lib/auth-server';
 import { queryOne } from '../../../lib/db';
 import UserMenu from '../../components/UserMenu';
-import SettingsForm from '../../components/SettingsForm';
+import InquiryForm from '../../components/InquiryForm';
 
-export default async function SettingsPage() {
+export default async function InquirePage({
+  searchParams,
+}: {
+  searchParams?: { archive_number?: string; name?: string };
+}) {
   const session = await getServerSession();
   if (!session) redirect('/login');
   if (!session.contactId) redirect('/collector');
 
-  const contact = await queryOne<{
-    pref_contact_email: boolean;
-    pref_contact_phone: boolean;
-    pref_news_email: boolean;
-  }>(
-    `SELECT pref_contact_email, pref_contact_phone, pref_news_email FROM public.contacts WHERE id = $1`,
+  const archiveNumber = searchParams?.archive_number || '';
+  const artworkName = searchParams?.name || '';
+
+  if (!archiveNumber) {
+    redirect('/collector/exclusive');
+  }
+
+  const contact = await queryOne<{ email: string | null; phone: string | null }>(
+    `SELECT email, phone FROM public.contacts WHERE id = $1`,
     [session.contactId]
   );
 
@@ -37,25 +44,24 @@ export default async function SettingsPage() {
         <UserMenu name={displayName} />
       </header>
 
-      <Link href="/collector" className="back-link">
-        ← Back to My Artworks
+      <Link href="/collector/exclusive" className="back-link">
+        ← Back to Exclusive
       </Link>
 
-      <div className="eyebrow">Settings</div>
+      <div className="eyebrow">Inquiry</div>
       <h1 className="title" style={{ fontSize: 32 }}>
-        Preferences
+        {artworkName || archiveNumber}
       </h1>
       <p className="subtitle">
-        Choose how the GLOD team should reach out to you when there is a question about one of your
-        artworks or a new inquiry.
+        Let us know how you'd like to receive the piece and how to best reach you — the GLOD team
+        will follow up shortly.
       </p>
 
-      <SettingsForm
-        initial={{
-          prefEmail: contact?.pref_contact_email ?? true,
-          prefPhone: contact?.pref_contact_phone ?? false,
-          prefNewsEmail: contact?.pref_news_email ?? true,
-        }}
+      <InquiryForm
+        archiveNumber={archiveNumber}
+        artworkName={artworkName}
+        defaultEmail={contact?.email || ''}
+        defaultPhone={contact?.phone || ''}
       />
     </div>
   );
