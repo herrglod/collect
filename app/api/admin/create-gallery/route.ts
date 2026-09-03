@@ -5,7 +5,7 @@ import { requireAdminSession } from '../../../../lib/auth-server';
 export async function POST(req: NextRequest) {
   const session = await requireAdminSession();
   if (!session) {
-    return NextResponse.json({ error: 'Nicht autorisiert.' }, { status: 401 });
+    return NextResponse.json({ error: 'Not authorized.' }, { status: 401 });
   }
 
   const body = await req.json().catch(() => null);
@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
   const city = typeof body?.city === 'string' && body.city.trim().length > 0 ? body.city.trim() : null;
 
   if (!name) {
-    return NextResponse.json({ error: 'Name der Gallery ist erforderlich.' }, { status: 400 });
+    return NextResponse.json({ error: 'Gallery name is required.' }, { status: 400 });
   }
 
   const contact = await queryOne<{ id: number; name: string }>(

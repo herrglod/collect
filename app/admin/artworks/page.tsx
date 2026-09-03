@@ -42,14 +42,13 @@ export default async function AdminArtworksPage() {
       <AdminNav active="artworks" />
 
       <div className="eyebrow">Admin</div>
-      <h1 className="title">Kunstwerke verwalten</h1>
+      <h1 className="title">Manage Artworks</h1>
       <p className="subtitle">
-        Kategorie und Edition-Typ steuern die Sammler-Statistik ("Unique Artwork" vs. "Limited
-        Edition") automatisch — du musst dies beim Zuordnen an einen Sammler nicht mehr extra
-        eintragen. Verkaufsstatus und Preis steuern den Exclusive-Bereich. Alle Änderungen hier
-        werden sofort und automatisch in der zentralen Datenbank gespeichert, ohne Speichern-Button —
-        sie wirken sich direkt überall auf der Plattform aus (Sammler-Ansicht, Zuordnungsformular,
-        Exclusive-Seite).
+        Category and edition type automatically drive the collector statistics ("Unique Artwork" vs.
+        "Limited Edition") — you no longer need to enter this separately when assigning to a collector.
+        For-sale status and price drive the Exclusive section. All changes here are saved instantly and
+        automatically to the central database, no save button needed — they take effect immediately
+        everywhere on the platform (collector view, assignment form, Exclusive page).
       </p>
 
       <ArtworksTable artworks={artworks} />

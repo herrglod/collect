@@ -5,13 +5,13 @@ import { requireAdminSession } from '../../../../lib/auth-server';
 export async function POST(req: NextRequest) {
   const session = await requireAdminSession();
   if (!session) {
-    return NextResponse.json({ error: 'Nicht autorisiert.' }, { status: 401 });
+    return NextResponse.json({ error: 'Not authorized.' }, { status: 401 });
   }
 
   const body = await req.json().catch(() => null);
   const ownershipId = Number(body?.ownership_id);
   if (!ownershipId) {
-    return NextResponse.json({ error: 'ownership_id ist erforderlich.' }, { status: 400 });
+    return NextResponse.json({ error: 'ownership_id is required.' }, { status: 400 });
   }
 
   const row = await queryOne(
@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
   );
 
   if (!row) {
-    return NextResponse.json({ error: 'Zuordnung nicht gefunden oder bereits beendet.' }, { status: 404 });
+    return NextResponse.json({ error: 'Assignment not found or already ended.' }, { status: 404 });
   }
 
   return NextResponse.json({ ok: true });

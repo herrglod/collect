@@ -30,14 +30,14 @@ export default async function AssignPage() {
       </header>
 
       <Link href="/admin" className="back-link">
-        ← Back to Zuordnungen
+        ← Back to Assignments
       </Link>
 
       <div className="eyebrow">Admin</div>
-      <h1 className="title">Kunstwerk zuordnen</h1>
+      <h1 className="title">Assign Artwork</h1>
       <p className="subtitle">
-        Ordne ein Kunstwerk aus dem Archiv einem Kontakt zu (Sammler oder Gallery Partner). Bei
-        Limited Editions kann zusätzlich die konkrete Exemplar-Nummer erfasst werden.
+        Assign an artwork from the archive to a contact (collector or gallery partner). For limited
+        editions, you can also record the specific edition number.
       </p>
 
       <AssignForm contacts={contacts} artworks={artworks} />

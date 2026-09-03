@@ -6,7 +6,7 @@ import { sendNewsNotification } from '../../../../lib/email';
 export async function POST(req: NextRequest) {
   const session = await requireAdminSession();
   if (!session) {
-    return NextResponse.json({ error: 'Nicht autorisiert.' }, { status: 401 });
+    return NextResponse.json({ error: 'Not authorized.' }, { status: 401 });
   }
 
   const body = await req.json().catch(() => null);
@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
   const postedAt = typeof body?.posted_at === 'string' && body.posted_at ? body.posted_at : null;
 
   if (!content) {
-    return NextResponse.json({ error: 'Text ist erforderlich.' }, { status: 400 });
+    return NextResponse.json({ error: 'Text is required.' }, { status: 400 });
   }
 
   await queryOne(

@@ -21,14 +21,14 @@ export default function TestEmailForm() {
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
         setStatus('error');
-        setMessage(data.error || 'Versand fehlgeschlagen.');
+        setMessage(data.error || 'Failed to send.');
         return;
       }
       setStatus('success');
-      setMessage(`Test-Mail an ${email} gesendet.`);
+      setMessage(`Test email sent to ${email}.`);
     } catch {
       setStatus('error');
-      setMessage('Unerwarteter Fehler.');
+      setMessage('Unexpected error.');
     }
   }
 
@@ -44,25 +44,25 @@ export default function TestEmailForm() {
           fontWeight: 600,
         }}
       >
-        Welcome-Mail testen
+        Test the Welcome Email
       </div>
       <form onSubmit={handleSubmit} style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
         <input
           type="email"
           required
-          placeholder="deine@email.com"
+          placeholder="you@email.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           style={{ padding: '6px 8px', border: '1px solid var(--line)', fontSize: 13, minWidth: 220 }}
         />
         <input
-          placeholder="Name (optional, z. B. Philipp)"
+          placeholder="Name (optional, e.g. Philipp)"
           value={name}
           onChange={(e) => setName(e.target.value)}
           style={{ padding: '6px 8px', border: '1px solid var(--line)', fontSize: 13, minWidth: 200 }}
         />
         <button className="btn-subtle" type="submit" disabled={status === 'loading'}>
-          {status === 'loading' ? 'Wird gesendet…' : 'Test-Mail senden'}
+          {status === 'loading' ? 'Sending…' : 'Send Test Email'}
         </button>
       </form>
       {message && (

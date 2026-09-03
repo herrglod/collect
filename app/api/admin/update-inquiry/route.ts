@@ -7,7 +7,7 @@ const VALID_STATUSES = ['pending', 'contacted', 'completed', 'cancelled'];
 export async function POST(req: NextRequest) {
   const session = await requireAdminSession();
   if (!session) {
-    return NextResponse.json({ error: 'Nicht autorisiert.' }, { status: 401 });
+    return NextResponse.json({ error: 'Not authorized.' }, { status: 401 });
   }
 
   const body = await req.json().catch(() => null);
@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
   const status = body?.status;
 
   if (!inquiryId || !VALID_STATUSES.includes(status)) {
-    return NextResponse.json({ error: 'Ungültige Angaben.' }, { status: 400 });
+    return NextResponse.json({ error: 'Invalid data.' }, { status: 400 });
   }
 
   const row = await queryOne(
@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
   );
 
   if (!row) {
-    return NextResponse.json({ error: 'Anfrage nicht gefunden.' }, { status: 404 });
+    return NextResponse.json({ error: 'Inquiry not found.' }, { status: 404 });
   }
 
   return NextResponse.json({ ok: true });

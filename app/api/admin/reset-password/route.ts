@@ -6,13 +6,13 @@ import { generateTempPassword, hashPassword } from '../../../../lib/password';
 export async function POST(req: NextRequest) {
   const session = await requireAdminSession();
   if (!session) {
-    return NextResponse.json({ error: 'Nicht autorisiert.' }, { status: 401 });
+    return NextResponse.json({ error: 'Not authorized.' }, { status: 401 });
   }
 
   const body = await req.json().catch(() => null);
   const platformUserId = Number(body?.platform_user_id);
   if (!platformUserId) {
-    return NextResponse.json({ error: 'Ungültiger Zugang.' }, { status: 400 });
+    return NextResponse.json({ error: 'Invalid account.' }, { status: 400 });
   }
 
   const user = await queryOne<{ id: number; email: string }>(
@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
     [platformUserId]
   );
   if (!user) {
-    return NextResponse.json({ error: 'Zugang nicht gefunden.' }, { status: 404 });
+    return NextResponse.json({ error: 'Account not found.' }, { status: 404 });
   }
 
   const tempPassword = generateTempPassword();

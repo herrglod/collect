@@ -40,14 +40,14 @@ export default async function AdminNewsPage() {
       <AdminNav active="news" />
 
       <div className="eyebrow">Admin</div>
-      <h1 className="title">News verfassen</h1>
-      <p className="subtitle">Beiträge erscheinen im News-Feed der Sammler, sortiert nach Beitragsdatum.</p>
+      <h1 className="title">Write News</h1>
+      <p className="subtitle">Posts appear in the collector News feed, sorted by post date.</p>
 
       <NewsComposer />
 
-      <h2 className="section-title">Veröffentlichte Beiträge</h2>
+      <h2 className="section-title">Published Posts</h2>
       {posts.length === 0 ? (
-        <div className="empty-state">Noch keine Beiträge.</div>
+        <div className="empty-state">No posts yet.</div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           {posts.map((p) => (

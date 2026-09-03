@@ -8,13 +8,13 @@ export default function AdminNav({
   return (
     <nav className="admin-subnav">
       <Link href="/admin" className={active === 'assign' ? 'active' : ''}>
-        Zuordnungen
+        Assignments
       </Link>
       <Link href="/admin/requests" className={active === 'requests' ? 'active' : ''}>
-        Connect-Art-Anfragen
+        Connect Art Requests
       </Link>
       <Link href="/admin/inquiries" className={active === 'inquiries' ? 'active' : ''}>
-        Kaufanfragen
+        Purchase Inquiries
       </Link>
       <Link href="/admin/news" className={active === 'news' ? 'active' : ''}>
         News
@@ -23,10 +23,10 @@ export default function AdminNav({
         Events
       </Link>
       <Link href="/admin/artworks" className={active === 'artworks' ? 'active' : ''}>
-        Kunstwerke
+        Artworks
       </Link>
       <Link href="/admin/accounts" className={active === 'accounts' ? 'active' : ''}>
-        Zugänge
+        Access
       </Link>
     </nav>
   );

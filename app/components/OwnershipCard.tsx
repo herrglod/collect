@@ -45,21 +45,21 @@ export default function OwnershipCard({ ownership }: { ownership: ActiveOwnershi
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        setError(data.error || 'Fehler beim Speichern.');
+        setError(data.error || 'Error saving.');
         setLoading(false);
         return;
       }
       setEditing(false);
       router.refresh();
     } catch {
-      setError('Unerwarteter Fehler.');
+      setError('Unexpected error.');
     } finally {
       setLoading(false);
     }
   }
 
   async function handleEnd() {
-    if (!confirm('Diese Zuordnung wirklich beenden?')) return;
+    if (!confirm('End this assignment?')) return;
     setLoading(true);
     try {
       const res = await fetch('/api/admin/end-ownership', {
@@ -71,7 +71,7 @@ export default function OwnershipCard({ ownership }: { ownership: ActiveOwnershi
         router.refresh();
       } else {
         const data = await res.json().catch(() => ({}));
-        alert(data.error || 'Fehler beim Beenden der Zuordnung.');
+        alert(data.error || 'Error ending assignment.');
       }
     } finally {
       setLoading(false);
@@ -115,14 +115,14 @@ export default function OwnershipCard({ ownership }: { ownership: ActiveOwnershi
             <input
               value={editionNumber}
               onChange={(e) => setEditionNumber(e.target.value)}
-              placeholder="Edition z. B. 3/20"
+              placeholder="Edition e.g. 3/20"
               style={{ width: 100, padding: '4px 6px', border: '1px solid var(--line)', fontSize: 12 }}
             />
           ) : (
             ownership.edition_number || 'Unique'
           )}
-          {' · seit '}
-          {new Date(ownership.acquired_at).toLocaleDateString('de-DE')}
+          {' · since '}
+          {new Date(ownership.acquired_at).toLocaleDateString('en-GB')}
         </div>
         {error && <div style={{ color: '#b0281a', fontSize: 11, marginTop: 4 }}>{error}</div>}
       </div>
@@ -144,7 +144,7 @@ export default function OwnershipCard({ ownership }: { ownership: ActiveOwnershi
                 letterSpacing: '0.05em',
               }}
             >
-              {loading ? '…' : 'Speichern'}
+              {loading ? '…' : 'Save'}
             </button>
             <button
               onClick={cancelEdit}
@@ -159,7 +159,7 @@ export default function OwnershipCard({ ownership }: { ownership: ActiveOwnershi
                 letterSpacing: '0.05em',
               }}
             >
-              Abbrechen
+              Cancel
             </button>
           </>
         ) : (
@@ -176,7 +176,7 @@ export default function OwnershipCard({ ownership }: { ownership: ActiveOwnershi
                 letterSpacing: '0.05em',
               }}
             >
-              Bearbeiten
+              Edit
             </button>
             <button
               onClick={handleEnd}
@@ -191,7 +191,7 @@ export default function OwnershipCard({ ownership }: { ownership: ActiveOwnershi
                 letterSpacing: '0.05em',
               }}
             >
-              Beenden
+              End
             </button>
           </>
         )}

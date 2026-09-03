@@ -9,13 +9,13 @@ const INVITE_TTL_DAYS = 14;
 export async function POST(req: NextRequest) {
   const session = await requireAdminSession();
   if (!session) {
-    return NextResponse.json({ error: 'Nicht autorisiert.' }, { status: 401 });
+    return NextResponse.json({ error: 'Not authorized.' }, { status: 401 });
   }
 
   const body = await req.json().catch(() => null);
   const contactId = Number(body?.contact_id);
   if (!contactId) {
-    return NextResponse.json({ error: 'Ungültiger Kontakt.' }, { status: 400 });
+    return NextResponse.json({ error: 'Invalid contact.' }, { status: 400 });
   }
 
   const contact = await queryOne<{ id: number; name: string; email: string | null }>(
@@ -23,14 +23,14 @@ export async function POST(req: NextRequest) {
     [contactId]
   );
   if (!contact) {
-    return NextResponse.json({ error: 'Kontakt nicht gefunden.' }, { status: 404 });
+    return NextResponse.json({ error: 'Contact not found.' }, { status: 404 });
   }
 
   const existingAccount = await queryOne(`SELECT id FROM public.platform_users WHERE contact_id = $1`, [
     contactId,
   ]);
   if (existingAccount) {
-    return NextResponse.json({ error: 'Dieser Kontakt hat bereits einen Zugang.' }, { status: 400 });
+    return NextResponse.json({ error: 'This contact already has access.' }, { status: 400 });
   }
 
   // Invalidate any previous, unaccepted invites for this contact so only the latest link works.

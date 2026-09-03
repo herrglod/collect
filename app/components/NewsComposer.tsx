@@ -20,7 +20,7 @@ export default function NewsComposer() {
     e.preventDefault();
     setError(null);
     if (!content.trim()) {
-      setError('Bitte einen Text eingeben.');
+      setError('Please enter some text.');
       return;
     }
     setLoading(true);
@@ -37,7 +37,7 @@ export default function NewsComposer() {
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        setError(data.error || 'Fehler beim Veröffentlichen.');
+        setError(data.error || 'Error publishing.');
         setLoading(false);
         return;
       }
@@ -47,7 +47,7 @@ export default function NewsComposer() {
       setPostedAt(todayISO());
       router.refresh();
     } catch {
-      setError('Unerwarteter Fehler.');
+      setError('Unexpected error.');
     } finally {
       setLoading(false);
     }
@@ -58,20 +58,20 @@ export default function NewsComposer() {
       {error && <div className="error-msg">{error}</div>}
       <form onSubmit={handleSubmit}>
         <div className="field">
-          <label htmlFor="title">Überschrift (optional)</label>
+          <label htmlFor="title">Title (optional)</label>
           <input id="title" value={title} onChange={(e) => setTitle(e.target.value)} />
         </div>
         <div className="field">
-          <label htmlFor="content">Beitrag</label>
+          <label htmlFor="content">Post</label>
           <textarea
             id="content"
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            placeholder="Was gibt es Neues?"
+            placeholder="What's new?"
           />
         </div>
         <div className="field">
-          <label htmlFor="image_url">Bild-URL (optional)</label>
+          <label htmlFor="image_url">Image URL (optional)</label>
           <input
             id="image_url"
             value={imageUrl}
@@ -80,17 +80,17 @@ export default function NewsComposer() {
           />
         </div>
         <div className="field">
-          <label htmlFor="posted_at">Beitragsdatum</label>
+          <label htmlFor="posted_at">Post Date</label>
           <input
             id="posted_at"
             type="date"
             value={postedAt}
             onChange={(e) => setPostedAt(e.target.value)}
           />
-          <div className="field-hint">Für rückwirkend verfasste News kannst du das Datum anpassen.</div>
+          <div className="field-hint">For backdated news, you can adjust the date.</div>
         </div>
         <button type="submit" className="btn" disabled={loading} style={{ width: '100%' }}>
-          {loading ? 'Wird veröffentlicht…' : 'Veröffentlichen'}
+          {loading ? 'Publishing…' : 'Publish'}
         </button>
       </form>
     </div>

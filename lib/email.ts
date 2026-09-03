@@ -157,7 +157,7 @@ export async function sendWelcomeEmail(toEmail: string, name: string): Promise<S
     console.warn('RESEND_API_KEY or RESEND_FROM_EMAIL not set — skipping welcome email.');
     return {
       sent: false,
-      reason: 'Resend ist noch nicht konfiguriert (RESEND_API_KEY / RESEND_FROM_EMAIL fehlen in Vercel).',
+      reason: 'Resend is not configured yet (RESEND_API_KEY / RESEND_FROM_EMAIL are missing in Vercel).',
     };
   }
 
@@ -179,11 +179,11 @@ export async function sendWelcomeEmail(toEmail: string, name: string): Promise<S
     if (!res.ok) {
       const text = await res.text().catch(() => '');
       console.error('Resend welcome email failed:', res.status, text);
-      return { sent: false, reason: `Resend-Fehler (${res.status}): ${text || 'unbekannt'}` };
+      return { sent: false, reason: `Resend error (${res.status}): ${text || 'unknown'}` };
     }
     return { sent: true };
   } catch (err: any) {
     console.error('Resend welcome email threw an error:', err);
-    return { sent: false, reason: err?.message || 'Unerwarteter Fehler beim Versand.' };
+    return { sent: false, reason: err?.message || 'Unexpected error while sending.' };
   }
 }

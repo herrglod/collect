@@ -52,11 +52,11 @@ export default async function AdminInquiriesPage() {
       <AdminNav active="inquiries" />
 
       <div className="eyebrow">Admin</div>
-      <h1 className="title">Kaufanfragen</h1>
-      <p className="subtitle">Anfragen aus dem Exclusive-Bereich der Sammler.</p>
+      <h1 className="title">Purchase Inquiries</h1>
+      <p className="subtitle">Inquiries submitted from the collector Exclusive section.</p>
 
       {inquiries.length === 0 ? (
-        <div className="empty-state">Noch keine Kaufanfragen.</div>
+        <div className="empty-state">No purchase inquiries yet.</div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {inquiries.map((i) => (

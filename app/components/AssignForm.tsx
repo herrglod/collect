@@ -32,11 +32,11 @@ export default function AssignForm({ contacts, artworks }: { contacts: Contact[]
     setSuccess(null);
 
     if (!matchedContact) {
-      setError('Bitte einen Kontakt aus der Liste auswählen.');
+      setError('Please select a contact from the list.');
       return;
     }
     if (!selectedArtwork) {
-      setError('Bitte eine gültige Archive Number aus der Liste auswählen.');
+      setError('Please select a valid archive number from the list.');
       return;
     }
 
@@ -54,18 +54,18 @@ export default function AssignForm({ contacts, artworks }: { contacts: Contact[]
       });
       const data = await res.json();
       if (!res.ok) {
-        setError(data.error || 'Fehler beim Zuordnen.');
+        setError(data.error || 'Error assigning artwork.');
         setLoading(false);
         return;
       }
-      setSuccess(`"${data.artwork_name}" wurde ${matchedContact.name} zugeordnet.`);
+      setSuccess(`"${data.artwork_name}" was assigned to ${matchedContact.name}.`);
       setContactQuery('');
       setArchiveNumber('');
       setEditionNumber('');
       setNotes('');
       router.refresh();
     } catch {
-      setError('Unerwarteter Fehler.');
+      setError('Unexpected error.');
     } finally {
       setLoading(false);
     }
@@ -79,13 +79,13 @@ export default function AssignForm({ contacts, artworks }: { contacts: Contact[]
       )}
       <form onSubmit={handleSubmit}>
         <div className="field">
-          <label htmlFor="contact">Sammler / Kontakt</label>
+          <label htmlFor="contact">Collector / Contact</label>
           <input
             id="contact"
             list="contact-list"
             value={contactQuery}
             onChange={(e) => setContactQuery(e.target.value)}
-            placeholder="Name eingeben…"
+            placeholder="Type a name…"
             required
           />
           <datalist id="contact-list">
@@ -102,7 +102,7 @@ export default function AssignForm({ contacts, artworks }: { contacts: Contact[]
             list="artwork-list"
             value={archiveNumber}
             onChange={(e) => setArchiveNumber(e.target.value)}
-            placeholder="z. B. A26706"
+            placeholder="e.g. A26706"
             required
           />
           <datalist id="artwork-list">
@@ -125,22 +125,21 @@ export default function AssignForm({ contacts, artworks }: { contacts: Contact[]
             id="edition"
             value={editionNumber}
             onChange={(e) => setEditionNumber(e.target.value)}
-            placeholder="z. B. 3/20"
+            placeholder="e.g. 3/20"
           />
           <div className="field-hint">
-            Nur für die Anzeige beim Sammler (z. B. "Edition Number: 3/20"). Ob das Werk als Unique
-            oder Limited Edition zählt, wird über die Kategorie unter "Kunstwerke verwalten"
-            gesteuert.
+            Display-only text for the collector (e.g. "Edition Number: 3/20"). Whether the piece counts
+            as Unique or Limited Edition is controlled by the category under "Manage Artworks".
           </div>
         </div>
 
         <div className="field">
-          <label htmlFor="notes">Notiz (optional)</label>
+          <label htmlFor="notes">Note (optional)</label>
           <input id="notes" value={notes} onChange={(e) => setNotes(e.target.value)} />
         </div>
 
         <button type="submit" className="btn" disabled={loading} style={{ width: '100%' }}>
-          {loading ? 'Wird zugeordnet…' : 'Zuordnen'}
+          {loading ? 'Assigning…' : 'Assign'}
         </button>
       </form>
     </div>

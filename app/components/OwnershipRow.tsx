@@ -44,21 +44,21 @@ export default function OwnershipRow({ ownership }: { ownership: ActiveOwnership
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        setError(data.error || 'Fehler beim Speichern.');
+        setError(data.error || 'Error saving.');
         setLoading(false);
         return;
       }
       setEditing(false);
       router.refresh();
     } catch {
-      setError('Unerwarteter Fehler.');
+      setError('Unexpected error.');
     } finally {
       setLoading(false);
     }
   }
 
   async function handleEnd() {
-    if (!confirm('Diese Zuordnung wirklich beenden?')) return;
+    if (!confirm('End this assignment?')) return;
     setLoading(true);
     try {
       const res = await fetch('/api/admin/end-ownership', {
@@ -70,7 +70,7 @@ export default function OwnershipRow({ ownership }: { ownership: ActiveOwnership
         router.refresh();
       } else {
         const data = await res.json().catch(() => ({}));
-        alert(data.error || 'Fehler beim Beenden der Zuordnung.');
+        alert(data.error || 'Error ending assignment.');
       }
     } finally {
       setLoading(false);
@@ -102,14 +102,14 @@ export default function OwnershipRow({ ownership }: { ownership: ActiveOwnership
           <input
             value={editionNumber}
             onChange={(e) => setEditionNumber(e.target.value)}
-            placeholder="z. B. 3/20"
+            placeholder="e.g. 3/20"
             style={{ width: 90, padding: '6px 8px', border: '1px solid var(--line)', fontSize: 13 }}
           />
         ) : (
           ownership.edition_number ?? '—'
         )}
       </td>
-      <td>{new Date(ownership.acquired_at).toLocaleDateString('de-DE')}</td>
+      <td>{new Date(ownership.acquired_at).toLocaleDateString('en-GB')}</td>
       <td>
         {editing ? (
           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
@@ -127,7 +127,7 @@ export default function OwnershipRow({ ownership }: { ownership: ActiveOwnership
                 letterSpacing: '0.05em',
               }}
             >
-              {loading ? '…' : 'Speichern'}
+              {loading ? '…' : 'Save'}
             </button>
             <button
               onClick={cancelEdit}
@@ -142,7 +142,7 @@ export default function OwnershipRow({ ownership }: { ownership: ActiveOwnership
                 letterSpacing: '0.05em',
               }}
             >
-              Abbrechen
+              Cancel
             </button>
           </div>
         ) : (
@@ -159,7 +159,7 @@ export default function OwnershipRow({ ownership }: { ownership: ActiveOwnership
                 letterSpacing: '0.05em',
               }}
             >
-              Bearbeiten
+              Edit
             </button>
             <button
               onClick={handleEnd}
@@ -174,7 +174,7 @@ export default function OwnershipRow({ ownership }: { ownership: ActiveOwnership
                 letterSpacing: '0.05em',
               }}
             >
-              Beenden
+              End
             </button>
           </div>
         )}

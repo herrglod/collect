@@ -26,27 +26,27 @@ export default function ArtworksTable({ artworks }: { artworks: Artwork[] }) {
   return (
     <div>
       <div className="field" style={{ maxWidth: 360, marginBottom: 24 }}>
-        <label htmlFor="artwork-search">Suche</label>
+        <label htmlFor="artwork-search">Search</label>
         <input
           id="artwork-search"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Name oder Archive Nr…"
+          placeholder="Name or archive no…"
         />
       </div>
 
       {filtered.length === 0 ? (
-        <div className="empty-state">Keine Treffer.</div>
+        <div className="empty-state">No matches.</div>
       ) : (
         <table className="data-table">
           <thead>
             <tr>
-              <th>Archive Nr.</th>
-              <th>Werk</th>
-              <th>Kategorie</th>
-              <th>Edition-Typ</th>
-              <th>Zum Verkauf</th>
-              <th>Preis (EUR)</th>
+              <th>Archive No.</th>
+              <th>Artwork</th>
+              <th>Category</th>
+              <th>Edition Type</th>
+              <th>For Sale</th>
+              <th>Price (EUR)</th>
               <th></th>
             </tr>
           </thead>

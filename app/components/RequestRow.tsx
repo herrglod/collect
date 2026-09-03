@@ -28,7 +28,7 @@ export default function RequestRow({ request }: { request: ConnectRequest }) {
         router.refresh();
       } else {
         const data = await res.json().catch(() => ({}));
-        alert(data.error || 'Fehler beim Aktualisieren.');
+        alert(data.error || 'Error updating.');
       }
     } finally {
       setLoading(false);
@@ -44,7 +44,7 @@ export default function RequestRow({ request }: { request: ConnectRequest }) {
         )}
       </td>
       <td style={{ maxWidth: 360, whiteSpace: 'pre-wrap' }}>{request.description}</td>
-      <td>{new Date(request.created_at).toLocaleDateString('de-DE')}</td>
+      <td>{new Date(request.created_at).toLocaleDateString('en-GB')}</td>
       <td>
         <span className={`status-pill ${request.status}`}>{request.status}</span>
       </td>
@@ -65,7 +65,7 @@ export default function RequestRow({ request }: { request: ConnectRequest }) {
                 letterSpacing: '0.05em',
               }}
             >
-              Genehmigen
+              Approve
             </button>
             <button
               onClick={() => review('rejected')}
@@ -80,7 +80,7 @@ export default function RequestRow({ request }: { request: ConnectRequest }) {
                 letterSpacing: '0.05em',
               }}
             >
-              Ablehnen
+              Reject
             </button>
           </div>
         )}

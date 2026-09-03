@@ -38,7 +38,7 @@ export default function InquiryRow({ inquiry }: { inquiry: Inquiry }) {
         router.refresh();
       } else {
         const data = await res.json().catch(() => ({}));
-        alert(data.error || 'Fehler beim Aktualisieren.');
+        alert(data.error || 'Error updating.');
       }
     } finally {
       setLoading(false);
@@ -53,7 +53,7 @@ export default function InquiryRow({ inquiry }: { inquiry: Inquiry }) {
             {inquiry.artwork_name} <span style={{ color: 'var(--ink-soft)', fontWeight: 400 }}>({inquiry.archive_number})</span>
           </div>
           <div style={{ fontSize: 12, color: 'var(--ink-soft)', marginTop: 4 }}>
-            {inquiry.contact_name} · {new Date(inquiry.created_at).toLocaleDateString('de-DE')}
+            {inquiry.contact_name} · {new Date(inquiry.created_at).toLocaleDateString('en-GB')}
           </div>
         </div>
         <select

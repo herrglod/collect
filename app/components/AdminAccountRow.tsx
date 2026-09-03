@@ -36,7 +36,7 @@ export default function AdminAccountRow({ contact }: { contact: Contact }) {
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        setError(data.error || 'Fehler beim Erstellen des Invite-Links.');
+        setError(data.error || 'Error creating the invite link.');
         return;
       }
       setInviteUrl(data.url);
@@ -58,7 +58,7 @@ export default function AdminAccountRow({ contact }: { contact: Contact }) {
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        setError(data.error || 'Fehler beim Anlegen.');
+        setError(data.error || 'Error creating account.');
         return;
       }
       setResult({ email: data.email, tempPassword: data.tempPassword });
@@ -82,7 +82,7 @@ export default function AdminAccountRow({ contact }: { contact: Contact }) {
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        setError(data.error || 'Fehler beim Zurücksetzen.');
+        setError(data.error || 'Error resetting password.');
         return;
       }
       setResult({ email: data.email, tempPassword: data.tempPassword });
@@ -136,17 +136,17 @@ export default function AdminAccountRow({ contact }: { contact: Contact }) {
             {hasAccount
               ? `Login: ${loginEmail}`
               : [contact.contact_email, contact.contact_phone].filter(Boolean).join(' · ') ||
-                'Keine Email/Telefon hinterlegt'}
+                'No email/phone on file'}
           </div>
         </div>
 
         {!hasAccount ? (
           <button className="btn-subtle" disabled={loading} onClick={createInvite}>
-            {loading ? 'Wird erstellt…' : 'Invite senden'}
+            {loading ? 'Creating…' : 'Send Invite'}
           </button>
         ) : (
           <button className="btn-subtle" disabled={loading} onClick={resetPassword}>
-            {loading ? 'Wird zurückgesetzt…' : 'Passwort zurücksetzen'}
+            {loading ? 'Resetting…' : 'Reset Password'}
           </button>
         )}
       </div>
@@ -166,20 +166,20 @@ export default function AdminAccountRow({ contact }: { contact: Contact }) {
               cursor: 'pointer',
             }}
           >
-            oder Zugang manuell mit Passwort anlegen
+            or create access manually with a password
           </button>
           {showManual && (
             <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 8, flexWrap: 'wrap' }}>
               {!contact.contact_email && (
                 <input
-                  placeholder="Login-Email"
+                  placeholder="Login email"
                   value={emailInput}
                   onChange={(e) => setEmailInput(e.target.value)}
                   style={{ padding: '6px 8px', border: '1px solid var(--line)', fontSize: 13 }}
                 />
               )}
               <button className="btn-subtle" disabled={loading} onClick={createAccount}>
-                {loading ? 'Wird angelegt…' : 'Zugang anlegen'}
+                {loading ? 'Creating…' : 'Create Access'}
               </button>
             </div>
           )}
@@ -202,20 +202,20 @@ export default function AdminAccountRow({ contact }: { contact: Contact }) {
             lineHeight: 1.6,
           }}
         >
-          <strong>Invite-Link (14 Tage gültig):</strong>
+          <strong>Invite link (valid for 14 days):</strong>
           <br />
           <span style={{ wordBreak: 'break-all' }}>{inviteUrl}</span>
           <div style={{ display: 'flex', gap: 12, marginTop: 8, flexWrap: 'wrap', alignItems: 'center' }}>
             <button className="btn-subtle" onClick={copyInviteLink}>
-              {copied ? 'Kopiert ✓' : 'Link kopieren'}
+              {copied ? 'Copied ✓' : 'Copy Link'}
             </button>
             {waHref ? (
               <a className="btn-subtle" href={waHref} target="_blank" rel="noreferrer">
-                Via WhatsApp senden
+                Send via WhatsApp
               </a>
             ) : (
               <span style={{ fontSize: 11, color: 'var(--ink-soft)' }}>
-                Keine Telefonnummer hinterlegt — Link manuell teilen.
+                No phone number on file — share the link manually.
               </span>
             )}
           </div>
@@ -232,14 +232,14 @@ export default function AdminAccountRow({ contact }: { contact: Contact }) {
             lineHeight: 1.6,
           }}
         >
-          <strong>Temporäres Passwort (nur jetzt sichtbar):</strong>
+          <strong>Temporary password (shown only now):</strong>
           <br />
           Email: {result.email}
           <br />
-          Passwort: <code>{result.tempPassword}</code>
+          Password: <code>{result.tempPassword}</code>
           <div style={{ fontSize: 11, color: 'var(--ink-soft)', marginTop: 6 }}>
-            Bitte jetzt kopieren und dem Sammler sicher übermitteln. Diese Anzeige verschwindet beim Neuladen der
-            Seite.
+            Please copy this now and pass it on to the collector securely. This will disappear when the
+            page reloads.
           </div>
         </div>
       )}

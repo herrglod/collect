@@ -5,7 +5,7 @@ import { queryOne } from '../../../../lib/db';
 export async function POST(req: NextRequest) {
   const session = await requireAdminSession();
   if (!session) {
-    return NextResponse.json({ error: 'Nicht autorisiert.' }, { status: 401 });
+    return NextResponse.json({ error: 'Not authorized.' }, { status: 401 });
   }
 
   const body = await req.json().catch(() => null);
@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
   const postedAt = typeof body?.posted_at === 'string' && body.posted_at ? body.posted_at : null;
 
   if (!postId || !content) {
-    return NextResponse.json({ error: 'post_id und Text sind erforderlich.' }, { status: 400 });
+    return NextResponse.json({ error: 'post_id and text are required.' }, { status: 400 });
   }
 
   const row = await queryOne(
@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
   );
 
   if (!row) {
-    return NextResponse.json({ error: 'Beitrag nicht gefunden.' }, { status: 404 });
+    return NextResponse.json({ error: 'Post not found.' }, { status: 404 });
   }
 
   return NextResponse.json({ ok: true });

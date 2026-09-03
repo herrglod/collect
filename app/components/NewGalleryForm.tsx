@@ -16,7 +16,7 @@ export default function NewGalleryForm() {
     e.preventDefault();
     setError(null);
     if (!name.trim()) {
-      setError('Name ist erforderlich.');
+      setError('Name is required.');
       return;
     }
     setLoading(true);
@@ -28,7 +28,7 @@ export default function NewGalleryForm() {
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        setError(data.error || 'Fehler beim Anlegen.');
+        setError(data.error || 'Error creating gallery.');
         setLoading(false);
         return;
       }
@@ -38,7 +38,7 @@ export default function NewGalleryForm() {
       setOpen(false);
       router.refresh();
     } catch {
-      setError('Unerwarteter Fehler.');
+      setError('Unexpected error.');
     } finally {
       setLoading(false);
     }
@@ -47,7 +47,7 @@ export default function NewGalleryForm() {
   if (!open) {
     return (
       <button className="btn" type="button" onClick={() => setOpen(true)} style={{ marginRight: 12 }}>
-        + Neue Gallery
+        + New Gallery
       </button>
     );
   }
@@ -70,15 +70,15 @@ export default function NewGalleryForm() {
         <input id="gallery-name" value={name} onChange={(e) => setName(e.target.value)} style={{ width: 200 }} />
       </div>
       <div className="field" style={{ marginBottom: 0 }}>
-        <label htmlFor="gallery-email">E-Mail (optional)</label>
+        <label htmlFor="gallery-email">Email (optional)</label>
         <input id="gallery-email" value={email} onChange={(e) => setEmail(e.target.value)} style={{ width: 200 }} />
       </div>
       <div className="field" style={{ marginBottom: 0 }}>
-        <label htmlFor="gallery-city">Stadt (optional)</label>
+        <label htmlFor="gallery-city">City (optional)</label>
         <input id="gallery-city" value={city} onChange={(e) => setCity(e.target.value)} style={{ width: 160 }} />
       </div>
       <button type="submit" className="btn" disabled={loading}>
-        {loading ? 'Speichert…' : 'Anlegen'}
+        {loading ? 'Saving…' : 'Create'}
       </button>
       <button
         type="button"
@@ -93,7 +93,7 @@ export default function NewGalleryForm() {
           cursor: 'pointer',
         }}
       >
-        Abbrechen
+        Cancel
       </button>
       {error && <div className="error-msg" style={{ width: '100%', marginBottom: 0 }}>{error}</div>}
     </form>

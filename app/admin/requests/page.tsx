@@ -43,21 +43,21 @@ export default async function AdminRequestsPage() {
       <AdminNav active="requests" />
 
       <div className="eyebrow">Admin</div>
-      <h1 className="title">Connect-Art-Anfragen</h1>
+      <h1 className="title">Connect Art Requests</h1>
       <p className="subtitle">
-        Prüfe, ob Sammler die angegebenen Kunstwerke wirklich erworben haben, bevor du sie über
-        "Kunstwerk zuordnen" mit ihrem Account verknüpfst.
+        Verify that the collector actually acquired the artwork described before linking it to their
+        account via "Assign Artwork".
       </p>
 
       {requests.length === 0 ? (
-        <div className="empty-state">Noch keine Anfragen.</div>
+        <div className="empty-state">No requests yet.</div>
       ) : (
         <table className="data-table">
           <thead>
             <tr>
-              <th>Sammler</th>
-              <th>Beschreibung</th>
-              <th>Eingereicht</th>
+              <th>Collector</th>
+              <th>Description</th>
+              <th>Submitted</th>
               <th>Status</th>
               <th></th>
             </tr>

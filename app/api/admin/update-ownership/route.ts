@@ -5,7 +5,7 @@ import { requireAdminSession } from '../../../../lib/auth-server';
 export async function POST(req: NextRequest) {
   const session = await requireAdminSession();
   if (!session) {
-    return NextResponse.json({ error: 'Nicht autorisiert.' }, { status: 401 });
+    return NextResponse.json({ error: 'Not authorized.' }, { status: 401 });
   }
 
   const body = await req.json().catch(() => null);
@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
   const editionNumber = editionNumberRaw.length > 0 ? editionNumberRaw : null;
 
   if (!ownershipId || !archiveNumber) {
-    return NextResponse.json({ error: 'ownership_id und archive_number sind erforderlich.' }, { status: 400 });
+    return NextResponse.json({ error: 'ownership_id and archive_number are required.' }, { status: 400 });
   }
 
   const artwork = await queryOne<{ archive_number: string }>(
@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
     [archiveNumber]
   );
   if (!artwork) {
-    return NextResponse.json({ error: `Kunstwerk mit Archive Number ${archiveNumber} nicht gefunden.` }, { status: 404 });
+    return NextResponse.json({ error: `Artwork with archive number ${archiveNumber} not found.` }, { status: 404 });
   }
 
   try {
@@ -35,16 +35,16 @@ export async function POST(req: NextRequest) {
       [ownershipId, archiveNumber, editionNumber]
     );
     if (!row) {
-      return NextResponse.json({ error: 'Zuordnung nicht gefunden oder bereits beendet.' }, { status: 404 });
+      return NextResponse.json({ error: 'Assignment not found or already ended.' }, { status: 404 });
     }
     return NextResponse.json({ ok: true });
   } catch (err: any) {
     if (err?.code === '23505') {
       return NextResponse.json(
-        { error: `Diese Edition (${archiveNumber} / ${editionNumber}) ist bereits einem aktiven Besitzer zugeordnet.` },
+        { error: `This edition (${archiveNumber} / ${editionNumber}) is already assigned to an active owner.` },
         { status: 409 }
       );
     }
-    return NextResponse.json({ error: 'Unerwarteter Fehler beim Speichern.' }, { status: 500 });
+    return NextResponse.json({ error: 'Unexpected error while saving.' }, { status: 500 });
   }
 }

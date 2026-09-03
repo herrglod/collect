@@ -5,7 +5,7 @@ import { queryOne } from '../../../../lib/db';
 export async function POST(req: NextRequest) {
   const session = await requireAdminSession();
   if (!session) {
-    return NextResponse.json({ error: 'Nicht autorisiert.' }, { status: 401 });
+    return NextResponse.json({ error: 'Not authorized.' }, { status: 401 });
   }
 
   const body = await req.json().catch(() => null);
@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
   const status = body?.status;
 
   if (!requestId || (status !== 'approved' && status !== 'rejected')) {
-    return NextResponse.json({ error: 'request_id und gültiger status sind erforderlich.' }, { status: 400 });
+    return NextResponse.json({ error: 'request_id and a valid status are required.' }, { status: 400 });
   }
 
   const row = await queryOne(
@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
   );
 
   if (!row) {
-    return NextResponse.json({ error: 'Anfrage nicht gefunden.' }, { status: 404 });
+    return NextResponse.json({ error: 'Request not found.' }, { status: 404 });
   }
 
   return NextResponse.json({ ok: true });

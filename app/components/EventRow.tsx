@@ -8,8 +8,10 @@ type Event = {
   title: string;
   description: string | null;
   event_date: string;
+  date_precision: 'exact' | 'month';
   location: string | null;
   image_url: string | null;
+  interest_count: number;
 };
 
 function toDateInputValue(value: string | Date): string {
@@ -21,6 +23,19 @@ function toDateInputValue(value: string | Date): string {
   return `${year}-${month}-${day}`;
 }
 
+function toMonthInputValue(value: string | Date): string {
+  return toDateInputValue(value).slice(0, 7);
+}
+
+function formatEventDate(value: string | Date, precision: 'exact' | 'month'): string {
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return '';
+  if (precision === 'month') {
+    return d.toLocaleDateString('en-GB', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+  }
+  return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'UTC' });
+}
+
 export default function EventRow({ event }: { event: Event }) {
   const router = useRouter();
   const [editing, setEditing] = useState(false);
@@ -28,7 +43,9 @@ export default function EventRow({ event }: { event: Event }) {
   const [description, setDescription] = useState(event.description || '');
   const [location, setLocation] = useState(event.location || '');
   const [imageUrl, setImageUrl] = useState(event.image_url || '');
+  const [datePrecision, setDatePrecision] = useState<'exact' | 'month'>(event.date_precision);
   const [eventDate, setEventDate] = useState(toDateInputValue(event.event_date));
+  const [eventMonth, setEventMonth] = useState(toMonthInputValue(event.event_date));
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -45,12 +62,13 @@ export default function EventRow({ event }: { event: Event }) {
           description: description.trim() || null,
           location: location.trim() || null,
           image_url: imageUrl.trim() || null,
-          event_date: eventDate,
+          date_precision: datePrecision,
+          event_date: datePrecision === 'month' ? eventMonth : eventDate,
         }),
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        setError(data.error || 'Fehler beim Speichern.');
+        setError(data.error || 'Something went wrong.');
         return;
       }
       setEditing(false);
@@ -61,7 +79,7 @@ export default function EventRow({ event }: { event: Event }) {
   }
 
   async function handleDelete() {
-    if (!confirm('Dieses Event wirklich löschen?')) return;
+    if (!confirm('Delete this event?')) return;
     setLoading(true);
     try {
       const res = await fetch('/api/admin/delete-event', {
@@ -73,7 +91,7 @@ export default function EventRow({ event }: { event: Event }) {
         router.refresh();
       } else {
         const data = await res.json().catch(() => ({}));
-        alert(data.error || 'Fehler beim Löschen.');
+        alert(data.error || 'Something went wrong.');
       }
     } finally {
       setLoading(false);
@@ -89,28 +107,50 @@ export default function EventRow({ event }: { event: Event }) {
           </div>
         )}
         <div className="field">
-          <label>Titel</label>
+          <label>Title</label>
           <input value={title} onChange={(e) => setTitle(e.target.value)} />
         </div>
         <div className="field">
-          <label>Beschreibung</label>
+          <label>Description</label>
           <textarea value={description} onChange={(e) => setDescription(e.target.value)} />
         </div>
         <div className="field">
-          <label>Ort</label>
+          <label>Location</label>
           <input value={location} onChange={(e) => setLocation(e.target.value)} />
         </div>
         <div className="field">
-          <label>Bild-URL</label>
+          <label>Image URL</label>
           <input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} />
         </div>
         <div className="field">
-          <label>Datum</label>
-          <input type="date" value={eventDate} onChange={(e) => setEventDate(e.target.value)} />
+          <label>Date</label>
+          <div style={{ display: 'flex', gap: 16, marginBottom: 8, fontSize: 13 }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontWeight: 400 }}>
+              <input
+                type="radio"
+                checked={datePrecision === 'exact'}
+                onChange={() => setDatePrecision('exact')}
+              />
+              Exact date
+            </label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontWeight: 400 }}>
+              <input
+                type="radio"
+                checked={datePrecision === 'month'}
+                onChange={() => setDatePrecision('month')}
+              />
+              Month &amp; year only
+            </label>
+          </div>
+          {datePrecision === 'exact' ? (
+            <input type="date" value={eventDate} onChange={(e) => setEventDate(e.target.value)} />
+          ) : (
+            <input type="month" value={eventMonth} onChange={(e) => setEventMonth(e.target.value)} />
+          )}
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
           <button onClick={handleSave} disabled={loading} className="btn">
-            {loading ? 'Speichert…' : 'Speichern'}
+            {loading ? 'Saving…' : 'Save'}
           </button>
           <button
             onClick={() => setEditing(false)}
@@ -125,7 +165,7 @@ export default function EventRow({ event }: { event: Event }) {
               cursor: 'pointer',
             }}
           >
-            Abbrechen
+            Cancel
           </button>
         </div>
       </div>
@@ -144,8 +184,12 @@ export default function EventRow({ event }: { event: Event }) {
     >
       <div>
         <div style={{ fontSize: 11, color: 'var(--ink-soft)', marginBottom: 6 }}>
-          {new Date(event.event_date).toLocaleDateString('de-DE')}
+          {formatEventDate(event.event_date, event.date_precision)}
           {event.location ? ` · ${event.location}` : ''}
+          {' · '}
+          <strong style={{ color: 'var(--ink)' }}>
+            {event.interest_count} interested
+          </strong>
         </div>
         <div style={{ fontWeight: 700, marginBottom: 4 }}>{event.title}</div>
         {event.description && <div style={{ fontSize: 14, whiteSpace: 'pre-wrap' }}>{event.description}</div>}
@@ -166,7 +210,7 @@ export default function EventRow({ event }: { event: Event }) {
             letterSpacing: '0.05em',
           }}
         >
-          Bearbeiten
+          Edit
         </button>
         <button
           onClick={handleDelete}
@@ -181,7 +225,7 @@ export default function EventRow({ event }: { event: Event }) {
             letterSpacing: '0.05em',
           }}
         >
-          Löschen
+          Delete
         </button>
       </div>
     </div>

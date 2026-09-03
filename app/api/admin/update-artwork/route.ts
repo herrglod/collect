@@ -8,7 +8,7 @@ const VALID_EDITION_TYPES = ['unique', 'limited_edition'];
 export async function POST(req: NextRequest) {
   const session = await requireAdminSession();
   if (!session) {
-    return NextResponse.json({ error: 'Nicht autorisiert.' }, { status: 401 });
+    return NextResponse.json({ error: 'Not authorized.' }, { status: 401 });
   }
 
   const body = await req.json().catch(() => null);
@@ -21,10 +21,10 @@ export async function POST(req: NextRequest) {
     typeof priceRaw === 'string' && priceRaw.trim().length > 0 ? Number(priceRaw.trim()) : null;
 
   if (!archiveNumber || !VALID_CATEGORIES.includes(category) || !VALID_EDITION_TYPES.includes(editionType)) {
-    return NextResponse.json({ error: 'Ungültige Angaben.' }, { status: 400 });
+    return NextResponse.json({ error: 'Invalid data.' }, { status: 400 });
   }
   if (price !== null && (Number.isNaN(price) || price < 0)) {
-    return NextResponse.json({ error: 'Ungültiger Preis.' }, { status: 400 });
+    return NextResponse.json({ error: 'Invalid price.' }, { status: 400 });
   }
 
   const row = await queryOne(
@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
   );
 
   if (!row) {
-    return NextResponse.json({ error: 'Kunstwerk nicht gefunden.' }, { status: 404 });
+    return NextResponse.json({ error: 'Artwork not found.' }, { status: 404 });
   }
 
   return NextResponse.json({ ok: true });

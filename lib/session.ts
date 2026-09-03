@@ -14,7 +14,7 @@ function getSecretKey() {
   const secret = process.env.SESSION_SECRET;
   if (!secret) {
     throw new Error(
-      'SESSION_SECRET ist nicht gesetzt. Bitte in den Vercel Projekt-Einstellungen (Environment Variables) hinterlegen.'
+      'SESSION_SECRET is not set. Please add it in the Vercel project settings (Environment Variables).'
     );
   }
   return new TextEncoder().encode(secret);

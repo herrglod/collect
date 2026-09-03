@@ -9,7 +9,7 @@ function createPool() {
   const connectionString = process.env.DATABASE_URL;
   if (!connectionString) {
     throw new Error(
-      'DATABASE_URL ist nicht gesetzt. Bitte in den Vercel Projekt-Einstellungen (Environment Variables) hinterlegen.'
+      'DATABASE_URL is not set. Please add it in the Vercel project settings (Environment Variables).'
     );
   }
   return new Pool({

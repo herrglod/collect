@@ -47,7 +47,7 @@ export default function NewsPostRow({ post }: { post: NewsPost }) {
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        setError(data.error || 'Fehler beim Speichern.');
+        setError(data.error || 'Error saving.');
         return;
       }
       setEditing(false);
@@ -58,7 +58,7 @@ export default function NewsPostRow({ post }: { post: NewsPost }) {
   }
 
   async function handleDelete() {
-    if (!confirm('Diesen Beitrag wirklich löschen?')) return;
+    if (!confirm('Delete this post?')) return;
     setLoading(true);
     try {
       const res = await fetch('/api/admin/delete-news', {
@@ -70,7 +70,7 @@ export default function NewsPostRow({ post }: { post: NewsPost }) {
         router.refresh();
       } else {
         const data = await res.json().catch(() => ({}));
-        alert(data.error || 'Fehler beim Löschen.');
+        alert(data.error || 'Error deleting.');
       }
     } finally {
       setLoading(false);
@@ -82,24 +82,24 @@ export default function NewsPostRow({ post }: { post: NewsPost }) {
       <div style={{ border: '1px solid var(--line)', padding: '16px 20px' }}>
         {error && <div className="error-msg" style={{ marginBottom: 12 }}>{error}</div>}
         <div className="field">
-          <label>Überschrift</label>
+          <label>Title</label>
           <input value={title} onChange={(e) => setTitle(e.target.value)} />
         </div>
         <div className="field">
-          <label>Beitrag</label>
+          <label>Post</label>
           <textarea value={content} onChange={(e) => setContent(e.target.value)} />
         </div>
         <div className="field">
-          <label>Bild-URL</label>
+          <label>Image URL</label>
           <input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} />
         </div>
         <div className="field">
-          <label>Beitragsdatum</label>
+          <label>Post Date</label>
           <input type="date" value={postedAt} onChange={(e) => setPostedAt(e.target.value)} />
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
           <button onClick={handleSave} disabled={loading} className="btn">
-            {loading ? 'Speichert…' : 'Speichern'}
+            {loading ? 'Saving…' : 'Save'}
           </button>
           <button
             onClick={() => setEditing(false)}
@@ -114,7 +114,7 @@ export default function NewsPostRow({ post }: { post: NewsPost }) {
               cursor: 'pointer',
             }}
           >
-            Abbrechen
+            Cancel
           </button>
         </div>
       </div>
@@ -133,7 +133,7 @@ export default function NewsPostRow({ post }: { post: NewsPost }) {
     >
       <div>
         <div style={{ fontSize: 11, color: 'var(--ink-soft)', marginBottom: 6 }}>
-          {new Date(post.posted_at).toLocaleDateString('de-DE')}
+          {new Date(post.posted_at).toLocaleDateString('en-GB')}
         </div>
         {post.title && <div style={{ fontWeight: 700, marginBottom: 4 }}>{post.title}</div>}
         <div style={{ fontSize: 14, whiteSpace: 'pre-wrap' }}>{post.content}</div>
@@ -154,7 +154,7 @@ export default function NewsPostRow({ post }: { post: NewsPost }) {
             letterSpacing: '0.05em',
           }}
         >
-          Bearbeiten
+          Edit
         </button>
         <button
           onClick={handleDelete}
@@ -169,7 +169,7 @@ export default function NewsPostRow({ post }: { post: NewsPost }) {
             letterSpacing: '0.05em',
           }}
         >
-          Löschen
+          Delete
         </button>
       </div>
     </div>

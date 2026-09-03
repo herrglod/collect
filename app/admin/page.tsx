@@ -65,15 +65,15 @@ export default async function AdminPage({
       <AdminNav active="assign" />
 
       <div className="eyebrow">Admin</div>
-      <h1 className="title">Zuordnungen verwalten</h1>
+      <h1 className="title">Manage Assignments</h1>
       <p className="subtitle">
-        {artworkCount} Kunstwerke im Archiv · {contactCount} {activeTab === 'gallery' ? 'Galleries' : 'Sammler'} ·{' '}
-        {ownerships.length} aktive Zuordnungen
+        {artworkCount} artworks in the archive · {contactCount} {activeTab === 'gallery' ? 'galleries' : 'collectors'} ·{' '}
+        {ownerships.length} active assignments
       </p>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 32, flexWrap: 'wrap' }}>
         <Link href="/admin/assign" className="btn">
-          + Neue Zuordnung
+          + New Assignment
         </Link>
         {activeTab === 'gallery' && <NewGalleryForm />}
       </div>
@@ -88,12 +88,12 @@ export default async function AdminPage({
       </div>
 
       <h2 className="section-title" style={{ marginTop: 32 }}>
-        Aktive Zuordnungen
+        Active Assignments
       </h2>
 
       {ownerships.length === 0 ? (
         <div className="empty-state">
-          {activeTab === 'gallery' ? 'Noch keiner Gallery Kunstwerke zugeordnet.' : 'Noch keine Kunstwerke zugeordnet.'}
+          {activeTab === 'gallery' ? 'No gallery has any artworks assigned yet.' : 'No artworks assigned yet.'}
         </div>
       ) : activeTab === 'gallery' ? (
         <GalleryPartnerList ownerships={ownerships} />
@@ -101,11 +101,11 @@ export default async function AdminPage({
         <table className="data-table">
           <thead>
             <tr>
-              <th>Sammler</th>
-              <th>Archive Nr.</th>
-              <th>Werk</th>
+              <th>Collector</th>
+              <th>Archive No.</th>
+              <th>Artwork</th>
               <th>Edition</th>
-              <th>Seit</th>
+              <th>Since</th>
               <th></th>
             </tr>
           </thead>

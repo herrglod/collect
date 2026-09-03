@@ -4,7 +4,7 @@ import { getServerSession, getSessionDisplayName } from '../../../lib/auth-serve
 import { query } from '../../../lib/db';
 import UserMenu from '../../components/UserMenu';
 import AdminNav from '../../components/AdminNav';
-import AdminAccountRow from '../../components/AdminAccountRow';
+import AdminAccountsList from '../../components/AdminAccountsList';
 import TestEmailForm from '../../components/TestEmailForm';
 
 type ContactAccount = {
@@ -47,22 +47,18 @@ export default async function AdminAccountsPage() {
       <AdminNav active="accounts" />
 
       <div className="eyebrow">Admin</div>
-      <h1 className="title">Zugänge</h1>
+      <h1 className="title">Access</h1>
       <p className="subtitle">
-        Login-Zugänge für Sammler anlegen oder Passwörter zurücksetzen. Das temporäre Passwort wird nur
-        einmal angezeigt — bitte direkt und sicher an den Sammler weitergeben.
+        Create collector login access or reset passwords. The temporary password is shown only once —
+        please pass it on to the collector directly and securely.
       </p>
 
       <TestEmailForm />
 
       {contacts.length === 0 ? (
-        <div className="empty-state">Noch keine Kontakte vorhanden.</div>
+        <div className="empty-state">No contacts yet.</div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-          {contacts.map((c) => (
-            <AdminAccountRow key={c.contact_id} contact={c} />
-          ))}
-        </div>
+        <AdminAccountsList contacts={contacts} />
       )}
     </div>
   );

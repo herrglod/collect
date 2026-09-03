@@ -50,7 +50,7 @@ export default function ArtworkRow({ artwork }: { artwork: Artwork }) {
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        setError(data.error || 'Fehler beim Speichern.');
+        setError(data.error || 'Error saving.');
         return;
       }
       setSavedFlash(true);
@@ -115,7 +115,7 @@ export default function ArtworkRow({ artwork }: { artwork: Artwork }) {
           disabled={loading}
           onChange={(e) => setPrice(e.target.value)}
           onBlur={() => save({ price_public: price })}
-          placeholder="z. B. 4500"
+          placeholder="e.g. 4500"
           style={{ width: 100, padding: '6px 8px', border: '1px solid var(--line)', fontSize: 13 }}
         />
       </td>
@@ -123,9 +123,9 @@ export default function ArtworkRow({ artwork }: { artwork: Artwork }) {
         {error ? (
           <span style={{ color: '#b0281a' }}>{error}</span>
         ) : savedFlash ? (
-          <span style={{ color: '#2f6b2f' }}>Gespeichert ✓</span>
+          <span style={{ color: '#2f6b2f' }}>Saved ✓</span>
         ) : loading ? (
-          <span style={{ color: 'var(--ink-soft)' }}>Speichert…</span>
+          <span style={{ color: 'var(--ink-soft)' }}>Saving…</span>
         ) : null}
       </td>
     </tr>
