@@ -76,6 +76,13 @@ function LoginForm() {
             {loading ? 'Checking…' : 'Sign In'}
           </button>
         </form>
+        <div style={{ marginTop: 20, fontSize: 12, color: 'var(--ink-soft)', textAlign: 'center' }}>
+          Forgot your password? Contact us at{' '}
+          <a href="mailto:hello@marcinglod.com" style={{ color: 'var(--ink)' }}>
+            hello@marcinglod.com
+          </a>{' '}
+          and we'll reset it for you.
+        </div>
       </div>
     </div>
   );

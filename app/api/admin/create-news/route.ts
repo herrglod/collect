@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAdminSession } from '../../../../lib/auth-server';
-import { queryOne } from '../../../../lib/db';
+import { query, queryOne } from '../../../../lib/db';
+import { sendNewsNotification } from '../../../../lib/email';
 
 export async function POST(req: NextRequest) {
   const session = await requireAdminSession();
@@ -25,6 +26,20 @@ export async function POST(req: NextRequest) {
      RETURNING id`,
     [title, content, imageUrl, postedAt]
   );
+
+  // Fire-and-forget: notify collectors who opted into news emails.
+  // Never let an email failure affect the news post response.
+  try {
+    const subscribers = await query<{ email: string }>(
+      `SELECT email FROM public.contacts WHERE pref_news_email = true AND email IS NOT NULL AND email <> ''`
+    );
+    const emails = subscribers.map((s) => s.email);
+    if (emails.length > 0) {
+      await sendNewsNotification({ title, content, image_url: imageUrl }, emails);
+    }
+  } catch (err) {
+    console.error('Failed to send news notification emails:', err);
+  }
 
   return NextResponse.json({ ok: true });
 }

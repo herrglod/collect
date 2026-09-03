@@ -4,6 +4,7 @@ import { getServerSession, getSessionDisplayName } from '../../../lib/auth-serve
 import { queryOne } from '../../../lib/db';
 import UserMenu from '../../components/UserMenu';
 import AccountForm from '../../components/AccountForm';
+import PasswordForm from '../../components/PasswordForm';
 
 export default async function AccountPage() {
   const session = await getServerSession();
@@ -51,6 +52,8 @@ export default async function AccountPage() {
       <p className="subtitle">Keep your contact information up to date.</p>
 
       <AccountForm initial={contact ?? { name: '', email: '', phone: '', instagram: '', city: '', country: '' }} />
+
+      <PasswordForm />
     </div>
   );
 }

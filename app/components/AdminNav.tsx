@@ -3,7 +3,7 @@ import Link from 'next/link';
 export default function AdminNav({
   active,
 }: {
-  active: 'assign' | 'requests' | 'news' | 'artworks' | 'inquiries';
+  active: 'assign' | 'requests' | 'news' | 'artworks' | 'inquiries' | 'accounts';
 }) {
   return (
     <nav className="admin-subnav">
@@ -21,6 +21,9 @@ export default function AdminNav({
       </Link>
       <Link href="/admin/artworks" className={active === 'artworks' ? 'active' : ''}>
         Kunstwerke
+      </Link>
+      <Link href="/admin/accounts" className={active === 'accounts' ? 'active' : ''}>
+        Zugänge
       </Link>
     </nav>
   );

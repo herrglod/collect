@@ -26,9 +26,14 @@ export default function Footer() {
         }}
       >
         <span>© {year} Marcin Glod. All rights reserved.</span>
-        <Link href="/imprint" style={{ textDecoration: 'none', color: 'var(--ink-soft)' }}>
-          Imprint
-        </Link>
+        <div style={{ display: 'flex', gap: 16 }}>
+          <Link href="/imprint" style={{ textDecoration: 'none', color: 'var(--ink-soft)' }}>
+            Imprint
+          </Link>
+          <Link href="/privacy" style={{ textDecoration: 'none', color: 'var(--ink-soft)' }}>
+            Privacy Policy
+          </Link>
+        </div>
       </div>
     </footer>
   );
