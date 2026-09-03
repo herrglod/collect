@@ -5,6 +5,7 @@ import { query } from '../../../lib/db';
 import UserMenu from '../../components/UserMenu';
 import AdminNav from '../../components/AdminNav';
 import AdminAccountRow from '../../components/AdminAccountRow';
+import TestEmailForm from '../../components/TestEmailForm';
 
 type ContactAccount = {
   contact_id: number;
@@ -51,6 +52,8 @@ export default async function AdminAccountsPage() {
         Login-Zugänge für Sammler anlegen oder Passwörter zurücksetzen. Das temporäre Passwort wird nur
         einmal angezeigt — bitte direkt und sicher an den Sammler weitergeben.
       </p>
+
+      <TestEmailForm />
 
       {contacts.length === 0 ? (
         <div className="empty-state">Noch keine Kontakte vorhanden.</div>

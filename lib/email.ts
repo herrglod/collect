@@ -3,6 +3,32 @@ import { SITE_URL } from './site';
 const RESEND_API_URL = 'https://api.resend.com/emails/batch';
 const RESEND_SINGLE_URL = 'https://api.resend.com/emails';
 
+// Mirrors the design tokens in app/globals.css so emails look like the site.
+const INK = '#0a0a0a';
+const INK_SOFT = '#767676';
+const LINE = '#e6e6e6';
+const BG = '#ffffff';
+const FONT = "'Helvetica Neue', Helvetica, Arial, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+
+function emailShell(bodyHtml: string): string {
+  return `
+  <div style="background:${BG};padding:40px 20px;">
+    <div style="font-family:${FONT};max-width:560px;margin:0 auto;color:${INK};">
+      <div style="font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:${INK_SOFT};font-weight:600;margin-bottom:28px;">
+        GLOD <span style="color:${INK};font-weight:700;">Collection</span>
+      </div>
+      ${bodyHtml}
+      <div style="border-top:1px solid ${LINE};margin-top:40px;padding-top:16px;font-size:11px;color:${INK_SOFT};">
+        GLOD Collection
+      </div>
+    </div>
+  </div>`;
+}
+
+function emailButton(href: string, label: string): string {
+  return `<a href="${href}" style="display:inline-block;background:${INK};color:${BG};text-decoration:none;padding:13px 24px;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;font-weight:600;">${label}</a>`;
+}
+
 type NewsEmailPost = {
   title: string | null;
   content: string;
@@ -18,29 +44,26 @@ function chunk<T>(arr: T[], size: number): T[][] {
 function buildNewsEmailHtml(post: NewsEmailPost): string {
   const heading = post.title ? post.title : 'New update from GLOD Collection';
   const image = post.image_url
-    ? `<img src="${post.image_url}" alt="" style="width:100%;max-width:560px;display:block;margin:0 0 20px;" />`
+    ? `<img src="${post.image_url}" alt="" style="width:100%;aspect-ratio:1/1;object-fit:cover;display:block;margin:0 0 24px;background:#f0f0f0;" />`
     : '';
   const paragraph = post.content
     .split('\n')
     .filter(Boolean)
-    .map((line) => `<p style="margin:0 0 14px;font-size:15px;line-height:1.6;color:#111;">${line}</p>`)
+    .map((line) => `<p style="margin:0 0 14px;font-size:15px;line-height:1.6;color:${INK};">${line}</p>`)
     .join('');
 
-  return `
-  <div style="font-family:Helvetica,Arial,sans-serif;max-width:560px;margin:0 auto;padding:32px 20px;">
-    <div style="font-size:12px;letter-spacing:1px;text-transform:uppercase;color:#888;margin-bottom:18px;">
-      GLOD Collection
-    </div>
-    <h1 style="font-size:20px;margin:0 0 20px;color:#111;">${heading}</h1>
+  const body = `
+    <h1 style="font-size:24px;font-weight:700;letter-spacing:-0.01em;line-height:1.15;margin:0 0 20px;color:${INK};">${heading}</h1>
     ${image}
     ${paragraph}
-    <a href="${SITE_URL}/collector/news" style="display:inline-block;margin-top:12px;padding:10px 18px;border:1px solid #111;color:#111;text-decoration:none;font-size:13px;letter-spacing:0.5px;text-transform:uppercase;">
-      View on GLOD Collection
-    </a>
-    <p style="margin-top:32px;font-size:11px;color:#999;">
+    <div style="margin-top:16px;">
+      ${emailButton(`${SITE_URL}/collector/news`, 'View on GLOD Collection')}
+    </div>
+    <p style="margin-top:32px;font-size:11px;color:${INK_SOFT};">
       You are receiving this because you opted in to news notifications in your GLOD Collection settings.
-    </p>
-  </div>`;
+    </p>`;
+
+  return emailShell(body);
 }
 
 /**
@@ -94,46 +117,48 @@ export async function sendNewsNotification(post: NewsEmailPost, recipientEmails:
 }
 
 function buildWelcomeEmailHtml(name: string): string {
-  return `
-  <div style="font-family:Helvetica,Arial,sans-serif;max-width:560px;margin:0 auto;padding:32px 20px;">
-    <div style="font-size:12px;letter-spacing:1px;text-transform:uppercase;color:#888;margin-bottom:18px;">
-      GLOD Collection
-    </div>
-    <h1 style="font-size:20px;margin:0 0 20px;color:#111;">Welcome to the GLOD Collectors Circle, ${name}</h1>
-    <p style="font-size:15px;line-height:1.6;color:#111;">
+  const body = `
+    <h1 style="font-size:24px;font-weight:700;letter-spacing:-0.01em;line-height:1.15;margin:0 0 20px;color:${INK};">
+      Welcome to the GLOD Collectors Circle, ${name}
+    </h1>
+    <p style="font-size:15px;line-height:1.6;color:${INK};margin:0 0 16px;">
       Your personal collector account is now active. From here you can:
     </p>
-    <ul style="font-size:15px;line-height:1.8;color:#111;padding-left:20px;margin:0 0 20px;">
+    <ul style="font-size:15px;line-height:1.8;color:${INK};padding-left:20px;margin:0 0 28px;">
       <li>View your artworks and their history in one place</li>
       <li>Follow artist news and studio updates</li>
       <li>Receive invitations to exclusive events</li>
       <li>Get early, collector-only access to new and available works</li>
       <li>Reach out directly if you'd like to add a piece to your collection</li>
     </ul>
-    <a href="${SITE_URL}/collector" style="display:inline-block;margin-top:4px;padding:10px 18px;border:1px solid #111;color:#111;text-decoration:none;font-size:13px;letter-spacing:0.5px;text-transform:uppercase;">
-      Go to My Collection
-    </a>
-    <p style="margin-top:28px;font-size:13px;line-height:1.6;color:#555;">
-      <strong>Coming soon:</strong> a collector marketplace, where you'll be able to list and trade pieces
-      from your own collection with other members of the GLOD Collectors Circle.
+    ${emailButton(`${SITE_URL}/collector`, 'Go to My Collection')}
+    <p style="margin-top:28px;font-size:13px;line-height:1.6;color:${INK_SOFT};">
+      <strong style="color:${INK};">Coming soon:</strong> a collector marketplace, where you'll be able to
+      list and trade pieces from your own collection with other members of the GLOD Collectors Circle.
     </p>
-    <p style="margin-top:32px;font-size:11px;color:#999;">
+    <p style="margin-top:32px;font-size:11px;color:${INK_SOFT};">
       You're receiving this because a GLOD Collection account was just created for you.
-    </p>
-  </div>`;
+    </p>`;
+
+  return emailShell(body);
 }
 
+type SendResult = { sent: boolean; reason?: string };
+
 /**
- * Sends the one-time welcome email after a collector activates their invite.
- * Fails silently (logs, doesn't throw) so a broken email provider never blocks activation.
+ * Sends the welcome email after a collector activates their invite (or on demand for testing).
+ * Never throws — returns a result object so callers can decide whether to surface a message.
  */
-export async function sendWelcomeEmail(toEmail: string, name: string): Promise<void> {
+export async function sendWelcomeEmail(toEmail: string, name: string): Promise<SendResult> {
   const apiKey = process.env.RESEND_API_KEY;
   const fromAddress = process.env.RESEND_FROM_EMAIL;
 
   if (!apiKey || !fromAddress) {
     console.warn('RESEND_API_KEY or RESEND_FROM_EMAIL not set — skipping welcome email.');
-    return;
+    return {
+      sent: false,
+      reason: 'Resend ist noch nicht konfiguriert (RESEND_API_KEY / RESEND_FROM_EMAIL fehlen in Vercel).',
+    };
   }
 
   try {
@@ -154,8 +179,11 @@ export async function sendWelcomeEmail(toEmail: string, name: string): Promise<v
     if (!res.ok) {
       const text = await res.text().catch(() => '');
       console.error('Resend welcome email failed:', res.status, text);
+      return { sent: false, reason: `Resend-Fehler (${res.status}): ${text || 'unbekannt'}` };
     }
-  } catch (err) {
+    return { sent: true };
+  } catch (err: any) {
     console.error('Resend welcome email threw an error:', err);
+    return { sent: false, reason: err?.message || 'Unerwarteter Fehler beim Versand.' };
   }
 }
