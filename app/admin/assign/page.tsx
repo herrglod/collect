@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation';
+import Link from 'next/link';
 import { getServerSession, getSessionDisplayName } from '../../../lib/auth-server';
 import { query } from '../../../lib/db';
 import UserMenu from '../../components/UserMenu';
@@ -21,12 +22,16 @@ export default async function AssignPage() {
     <div className="page">
       <header className="masthead">
         <div className="masthead-left">
-          <div className="brand">
+          <Link href="/admin" className="brand">
             GLOD <span>Collection</span>
-          </div>
+          </Link>
         </div>
         <UserMenu name={displayName} />
       </header>
+
+      <Link href="/admin" className="back-link">
+        ← Back to Zuordnungen
+      </Link>
 
       <div className="eyebrow">Admin</div>
       <h1 className="title">Kunstwerk zuordnen</h1>

@@ -21,17 +21,21 @@ export default async function SettingsPage() {
     <div className="page">
       <header className="masthead">
         <div className="masthead-left">
-          <div className="brand">
+          <Link href="/collector" className="brand">
             GLOD <span>Collection</span>
-          </div>
+          </Link>
           <nav className="primary-nav">
-            <Link href="/collector">My Collection</Link>
+            <Link href="/collector">My Artworks</Link>
             <Link href="/collector/news">News</Link>
             <Link href="/collector/exclusive">Exclusive</Link>
           </nav>
         </div>
         <UserMenu name={displayName} />
       </header>
+
+      <Link href="/collector" className="back-link">
+        ← Back to My Artworks
+      </Link>
 
       <div className="eyebrow">Settings</div>
       <h1 className="title" style={{ fontSize: 32 }}>

@@ -18,6 +18,7 @@ type OwnedArtwork = {
   featured_image_url: string | null;
   webflow_item_id: string | null;
   category: string;
+  edition_type: string;
 };
 
 type Exhibition = {
@@ -29,6 +30,7 @@ type Exhibition = {
   duration: string | null;
   year: number | null;
   hero_image_url: string | null;
+  exhibition_type: string | null;
 };
 
 export default async function CollectorPage() {
@@ -49,7 +51,7 @@ export default async function CollectorPage() {
   const artworks = await query<OwnedArtwork>(
     `SELECT o.id AS ownership_id, o.archive_number, o.edition_number, o.acquired_at,
             a.name, a.year, a.medium, a.size, a.rarity, a.description,
-            a.featured_image_url, a.webflow_item_id, a.category
+            a.featured_image_url, a.webflow_item_id, a.category, a.edition_type
      FROM public.ownerships o
      JOIN public.artworks a ON a.archive_number = o.archive_number
      WHERE o.contact_id = $1 AND o.transferred_at IS NULL
@@ -57,8 +59,10 @@ export default async function CollectorPage() {
     [session.contactId]
   );
 
-  const uniqueCount = artworks.filter((a) => a.category === 'artwork' && !a.edition_number).length;
-  const limitedCount = artworks.filter((a) => a.category === 'artwork' && !!a.edition_number).length;
+  const uniqueCount = artworks.filter((a) => a.category === 'artwork' && a.edition_type === 'unique').length;
+  const limitedCount = artworks.filter(
+    (a) => a.category === 'artwork' && a.edition_type === 'limited_edition'
+  ).length;
   const objectsCount = artworks.filter((a) => a.category === 'objects').length;
   const fashionCount = artworks.filter((a) => a.category === 'fashion').length;
 
@@ -67,10 +71,10 @@ export default async function CollectorPage() {
   const relatedExhibitions =
     ownedWebflowIds.length > 0
       ? await query<Exhibition>(
-          `SELECT id, name, venue, city, country, duration, year, hero_image_url
+          `SELECT id, name, venue, city, country, duration, year, hero_image_url, exhibition_type
            FROM public.exhibitions
            WHERE published = true AND artwork_webflow_ids && $1::text[]
-           ORDER BY year DESC NULLS LAST`,
+           ORDER BY created_at DESC`,
           [ownedWebflowIds]
         )
       : [];
@@ -78,10 +82,10 @@ export default async function CollectorPage() {
   const relatedIds = new Set(relatedExhibitions.map((e) => e.id));
 
   const otherExhibitions = await query<Exhibition>(
-    `SELECT id, name, venue, city, country, duration, year, hero_image_url
+    `SELECT id, name, venue, city, country, duration, year, hero_image_url, exhibition_type
      FROM public.exhibitions
      WHERE published = true
-     ORDER BY year DESC NULLS LAST
+     ORDER BY created_at DESC
      LIMIT 8`
   );
 
@@ -92,11 +96,11 @@ export default async function CollectorPage() {
     <div className="page">
       <header className="masthead">
         <div className="masthead-left">
-          <div className="brand">
+          <Link href="/collector" className="brand">
             GLOD <span>Collection</span>
-          </div>
+          </Link>
           <nav className="primary-nav">
-            <Link href="/collector">My Collection</Link>
+            <Link href="/collector">My Artworks</Link>
             <Link href="/collector/news">News</Link>
             <Link href="/collector/exclusive">Exclusive</Link>
           </nav>
@@ -122,18 +126,14 @@ export default async function CollectorPage() {
           <div className="stat-value">{limitedCount}</div>
           <div className="stat-name">Limited Edition{limitedCount === 1 ? '' : 's'}</div>
         </div>
-        {(objectsCount > 0 || fashionCount > 0) && (
-          <>
-            <div className="stat-item">
-              <div className="stat-value">{objectsCount}</div>
-              <div className="stat-name">Object{objectsCount === 1 ? '' : 's'}</div>
-            </div>
-            <div className="stat-item">
-              <div className="stat-value">{fashionCount}</div>
-              <div className="stat-name">Fashion Item{fashionCount === 1 ? '' : 's'}</div>
-            </div>
-          </>
-        )}
+        <div className="stat-item">
+          <div className="stat-value">{objectsCount}</div>
+          <div className="stat-name">Object{objectsCount === 1 ? '' : 's'}</div>
+        </div>
+        <div className="stat-item">
+          <div className="stat-value">{fashionCount}</div>
+          <div className="stat-name">Fashion Item{fashionCount === 1 ? '' : 's'}</div>
+        </div>
       </div>
 
       {uniqueCount === 0 && (
@@ -199,7 +199,7 @@ export default async function CollectorPage() {
 
       {generalExhibitions.length > 0 && (
         <>
-          <h2 className="section-title">Current Exhibitions &amp; Projects</h2>
+          <h2 className="section-title">Exhibitions &amp; Collaborations</h2>
           <div className="grid">
             {generalExhibitions.map((ex) => (
               <div className="card" key={ex.id}>
@@ -209,7 +209,7 @@ export default async function CollectorPage() {
                   <div className="card-image" />
                 )}
                 <div className="card-body">
-                  <div className="card-number">{ex.year ?? ''}</div>
+                  <div className="card-number">{ex.exhibition_type || 'Project'}{ex.year ? ` · ${ex.year}` : ''}</div>
                   <h3 className="card-title">{ex.name}</h3>
                   <div className="card-meta">
                     {[ex.venue, ex.city, ex.country].filter(Boolean).join(', ')}

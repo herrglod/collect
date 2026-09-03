@@ -120,13 +120,18 @@ export default function AssignForm({ contacts, artworks }: { contacts: Contact[]
         </div>
 
         <div className="field">
-          <label htmlFor="edition">Limited Edition (Optional)</label>
+          <label htmlFor="edition">Edition Number (Optional)</label>
           <input
             id="edition"
             value={editionNumber}
             onChange={(e) => setEditionNumber(e.target.value)}
             placeholder="z. B. 3/20"
           />
+          <div className="field-hint">
+            Nur für die Anzeige beim Sammler (z. B. "Edition Number: 3/20"). Ob das Werk als Unique
+            oder Limited Edition zählt, wird über die Kategorie unter "Kunstwerke verwalten"
+            gesteuert.
+          </div>
         </div>
 
         <div className="field">

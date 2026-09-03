@@ -52,9 +52,9 @@ export default async function AdminPage({
     <div className="page">
       <header className="masthead">
         <div className="masthead-left">
-          <div className="brand">
+          <Link href="/admin" className="brand">
             GLOD <span>Collection</span>
-          </div>
+          </Link>
         </div>
         <UserMenu name={displayName} />
       </header>

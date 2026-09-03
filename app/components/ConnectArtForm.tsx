@@ -3,9 +3,9 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-export default function ConnectArtForm() {
+export default function ConnectArtForm({ defaultDescription = '' }: { defaultDescription?: string }) {
   const router = useRouter();
-  const [description, setDescription] = useState('');
+  const [description, setDescription] = useState(defaultDescription);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);

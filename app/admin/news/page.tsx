@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation';
+import Link from 'next/link';
 import { getServerSession, getSessionDisplayName } from '../../../lib/auth-server';
 import { query } from '../../../lib/db';
 import UserMenu from '../../components/UserMenu';
@@ -8,9 +9,10 @@ import NewsPostRow from '../../components/NewsPostRow';
 
 type NewsPost = {
   id: number;
+  title: string | null;
   content: string;
   image_url: string | null;
-  created_at: string;
+  posted_at: string;
 };
 
 export default async function AdminNewsPage() {
@@ -19,7 +21,7 @@ export default async function AdminNewsPage() {
   if (session.role !== 'admin') redirect('/collector');
 
   const posts = await query<NewsPost>(
-    `SELECT id, content, image_url, created_at FROM public.news_posts ORDER BY created_at DESC`
+    `SELECT id, title, content, image_url, posted_at FROM public.news_posts ORDER BY posted_at DESC, id DESC`
   );
 
   const displayName = await getSessionDisplayName(session);
@@ -28,9 +30,9 @@ export default async function AdminNewsPage() {
     <div className="page">
       <header className="masthead">
         <div className="masthead-left">
-          <div className="brand">
+          <Link href="/admin" className="brand">
             GLOD <span>Collection</span>
-          </div>
+          </Link>
         </div>
         <UserMenu name={displayName} />
       </header>
@@ -39,7 +41,7 @@ export default async function AdminNewsPage() {
 
       <div className="eyebrow">Admin</div>
       <h1 className="title">News verfassen</h1>
-      <p className="subtitle">Beiträge erscheinen im News-Feed der Sammler, neueste zuerst.</p>
+      <p className="subtitle">Beiträge erscheinen im News-Feed der Sammler, sortiert nach Beitragsdatum.</p>
 
       <NewsComposer />
 

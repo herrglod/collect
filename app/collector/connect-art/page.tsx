@@ -12,10 +12,19 @@ type RequestRow = {
   created_at: string;
 };
 
-export default async function ConnectArtPage() {
+export default async function ConnectArtPage({
+  searchParams,
+}: {
+  searchParams?: { archive_number?: string; name?: string };
+}) {
   const session = await getServerSession();
   if (!session) redirect('/login');
   if (!session.contactId) redirect('/collector');
+
+  const prefill =
+    searchParams?.archive_number
+      ? `I would like to inquire about purchasing "${searchParams?.name || ''}" (${searchParams.archive_number}) from the Exclusive area.`
+      : '';
 
   const requests = await query<RequestRow>(
     `SELECT id, description, status, created_at
@@ -31,17 +40,21 @@ export default async function ConnectArtPage() {
     <div className="page">
       <header className="masthead">
         <div className="masthead-left">
-          <div className="brand">
+          <Link href="/collector" className="brand">
             GLOD <span>Collection</span>
-          </div>
+          </Link>
           <nav className="primary-nav">
-            <Link href="/collector">My Collection</Link>
+            <Link href="/collector">My Artworks</Link>
             <Link href="/collector/news">News</Link>
             <Link href="/collector/exclusive">Exclusive</Link>
           </nav>
         </div>
         <UserMenu name={displayName} />
       </header>
+
+      <Link href="/collector" className="back-link">
+        ← Back to My Artworks
+      </Link>
 
       <div className="eyebrow">Connect Art</div>
       <h1 className="title" style={{ fontSize: 32 }}>
@@ -52,7 +65,7 @@ export default async function ConnectArtPage() {
         Our team will review your request and link it to your account once verified.
       </p>
 
-      <ConnectArtForm />
+      <ConnectArtForm defaultDescription={prefill} />
 
       {requests.length > 0 && (
         <>

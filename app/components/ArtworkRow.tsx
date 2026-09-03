@@ -1,12 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 type Artwork = {
   archive_number: string;
   name: string;
   category: 'artwork' | 'objects' | 'fashion';
+  edition_type: 'unique' | 'limited_edition';
   for_sale: boolean;
   price_public: number | null;
 };
@@ -14,12 +15,25 @@ type Artwork = {
 export default function ArtworkRow({ artwork }: { artwork: Artwork }) {
   const router = useRouter();
   const [category, setCategory] = useState(artwork.category);
+  const [editionType, setEditionType] = useState(artwork.edition_type);
   const [forSale, setForSale] = useState(artwork.for_sale);
   const [price, setPrice] = useState(artwork.price_public != null ? String(artwork.price_public) : '');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [savedFlash, setSavedFlash] = useState(false);
 
-  async function save(next: { category?: string; for_sale?: boolean; price_public?: string }) {
+  useEffect(() => {
+    if (!savedFlash) return;
+    const t = setTimeout(() => setSavedFlash(false), 1800);
+    return () => clearTimeout(t);
+  }, [savedFlash]);
+
+  async function save(next: {
+    category?: string;
+    edition_type?: string;
+    for_sale?: boolean;
+    price_public?: string;
+  }) {
     setLoading(true);
     setError(null);
     try {
@@ -29,6 +43,7 @@ export default function ArtworkRow({ artwork }: { artwork: Artwork }) {
         body: JSON.stringify({
           archive_number: artwork.archive_number,
           category: next.category ?? category,
+          edition_type: next.edition_type ?? editionType,
           for_sale: next.for_sale ?? forSale,
           price_public: next.price_public !== undefined ? next.price_public : price,
         }),
@@ -38,6 +53,7 @@ export default function ArtworkRow({ artwork }: { artwork: Artwork }) {
         setError(data.error || 'Fehler beim Speichern.');
         return;
       }
+      setSavedFlash(true);
       router.refresh();
     } finally {
       setLoading(false);
@@ -65,6 +81,21 @@ export default function ArtworkRow({ artwork }: { artwork: Artwork }) {
         </select>
       </td>
       <td>
+        <select
+          value={editionType}
+          disabled={loading}
+          onChange={(e) => {
+            const val = e.target.value as Artwork['edition_type'];
+            setEditionType(val);
+            save({ edition_type: val });
+          }}
+          style={{ padding: '6px 8px', border: '1px solid var(--line)', fontSize: 13 }}
+        >
+          <option value="unique">Unique</option>
+          <option value="limited_edition">Limited Edition</option>
+        </select>
+      </td>
+      <td>
         <label className="switch">
           <input
             type="checkbox"
@@ -88,7 +119,15 @@ export default function ArtworkRow({ artwork }: { artwork: Artwork }) {
           style={{ width: 100, padding: '6px 8px', border: '1px solid var(--line)', fontSize: 13 }}
         />
       </td>
-      <td>{error && <span style={{ color: '#b0281a', fontSize: 11 }}>{error}</span>}</td>
+      <td style={{ fontSize: 11, minWidth: 70 }}>
+        {error ? (
+          <span style={{ color: '#b0281a' }}>{error}</span>
+        ) : savedFlash ? (
+          <span style={{ color: '#2f6b2f' }}>Gespeichert ✓</span>
+        ) : loading ? (
+          <span style={{ color: 'var(--ink-soft)' }}>Speichert…</span>
+        ) : null}
+      </td>
     </tr>
   );
 }

@@ -3,6 +3,7 @@ import { requireAdminSession } from '../../../../lib/auth-server';
 import { queryOne } from '../../../../lib/db';
 
 const VALID_CATEGORIES = ['artwork', 'objects', 'fashion'];
+const VALID_EDITION_TYPES = ['unique', 'limited_edition'];
 
 export async function POST(req: NextRequest) {
   const session = await requireAdminSession();
@@ -13,12 +14,13 @@ export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => null);
   const archiveNumber = typeof body?.archive_number === 'string' ? body.archive_number : '';
   const category = typeof body?.category === 'string' ? body.category : '';
+  const editionType = typeof body?.edition_type === 'string' ? body.edition_type : '';
   const forSale = Boolean(body?.for_sale);
   const priceRaw = body?.price_public;
   const price =
     typeof priceRaw === 'string' && priceRaw.trim().length > 0 ? Number(priceRaw.trim()) : null;
 
-  if (!archiveNumber || !VALID_CATEGORIES.includes(category)) {
+  if (!archiveNumber || !VALID_CATEGORIES.includes(category) || !VALID_EDITION_TYPES.includes(editionType)) {
     return NextResponse.json({ error: 'Ungültige Angaben.' }, { status: 400 });
   }
   if (price !== null && (Number.isNaN(price) || price < 0)) {
@@ -27,10 +29,10 @@ export async function POST(req: NextRequest) {
 
   const row = await queryOne(
     `UPDATE public.artworks
-     SET category = $2, for_sale = $3, price_public = $4, updated_at = now()
+     SET category = $2, edition_type = $3, for_sale = $4, price_public = $5, updated_at = now()
      WHERE archive_number = $1
      RETURNING archive_number`,
-    [archiveNumber, category, forSale, price]
+    [archiveNumber, category, editionType, forSale, price]
   );
 
   if (!row) {
