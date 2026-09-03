@@ -43,7 +43,7 @@ export default async function AdminPage({
     `SELECT count(*)::text AS count FROM public.artworks`
   );
   const [{ count: contactCount }] = await query<{ count: string }>(
-    `SELECT count(*)::text AS count FROM public.contacts WHERE ${typeFilter}`
+    `SELECT count(*)::text AS count FROM public.contacts c WHERE ${typeFilter}`
   );
   const displayName = await getSessionDisplayName(session);
 
