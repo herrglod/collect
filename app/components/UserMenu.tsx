@@ -47,6 +47,9 @@ export default function UserMenu({ name }: { name: string }) {
           <Link href="/collector/connect-art" className="user-menu-item" onClick={() => setOpen(false)}>
             Connect Art
           </Link>
+          <Link href="/collector/requests" className="user-menu-item" onClick={() => setOpen(false)}>
+            My Requests
+          </Link>
           <Link href="/collector/settings" className="user-menu-item" onClick={() => setOpen(false)}>
             Settings
           </Link>

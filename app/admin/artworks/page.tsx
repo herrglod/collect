@@ -13,6 +13,7 @@ type Artwork = {
   edition_type: 'unique' | 'limited_edition';
   for_sale: boolean;
   price_public: number | null;
+  saved_count: number;
 };
 
 export default async function AdminArtworksPage() {
@@ -21,9 +22,12 @@ export default async function AdminArtworksPage() {
   if (session.role !== 'admin') redirect('/collector');
 
   const artworks = await query<Artwork>(
-    `SELECT archive_number, name, category, edition_type, for_sale, price_public
-     FROM public.artworks
-     ORDER BY archive_number ASC`
+    `SELECT a.archive_number, a.name, a.category, a.edition_type, a.for_sale, a.price_public,
+            COUNT(s.id)::int AS saved_count
+     FROM public.artworks a
+     LEFT JOIN public.artwork_saves s ON s.archive_number = a.archive_number
+     GROUP BY a.archive_number
+     ORDER BY a.archive_number ASC`
   );
 
   const displayName = await getSessionDisplayName(session);

@@ -10,6 +10,7 @@ type Artwork = {
   edition_type: 'unique' | 'limited_edition';
   for_sale: boolean;
   price_public: number | null;
+  saved_count: number;
 };
 
 export default function ArtworkRow({ artwork }: { artwork: Artwork }) {
@@ -118,6 +119,9 @@ export default function ArtworkRow({ artwork }: { artwork: Artwork }) {
           placeholder="e.g. 4500"
           style={{ width: 100, padding: '6px 8px', border: '1px solid var(--line)', fontSize: 13 }}
         />
+      </td>
+      <td style={{ textAlign: 'center', color: artwork.saved_count > 0 ? 'var(--ink)' : 'var(--ink-soft)' }}>
+        {artwork.saved_count}
       </td>
       <td style={{ fontSize: 11, minWidth: 70 }}>
         {error ? (

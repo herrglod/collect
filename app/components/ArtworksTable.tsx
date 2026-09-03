@@ -10,6 +10,7 @@ type Artwork = {
   edition_type: 'unique' | 'limited_edition';
   for_sale: boolean;
   price_public: number | null;
+  saved_count: number;
 };
 
 export default function ArtworksTable({ artworks }: { artworks: Artwork[] }) {
@@ -47,6 +48,7 @@ export default function ArtworksTable({ artworks }: { artworks: Artwork[] }) {
               <th>Edition Type</th>
               <th>For Sale</th>
               <th>Price (EUR)</th>
+              <th>Saved</th>
               <th></th>
             </tr>
           </thead>

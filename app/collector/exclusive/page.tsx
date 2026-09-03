@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { getServerSession, getSessionDisplayName } from '../../../lib/auth-server';
 import { query } from '../../../lib/db';
 import UserMenu from '../../components/UserMenu';
+import ArtworkSaveButton from '../../components/ArtworkSaveButton';
 
 type ForSaleArtwork = {
   archive_number: string;
@@ -28,6 +29,15 @@ export default async function ExclusivePage() {
   );
 
   const displayName = await getSessionDisplayName(session);
+
+  const savedSet = new Set<string>();
+  if (session.contactId) {
+    const savedRows = await query<{ archive_number: string }>(
+      `SELECT archive_number FROM public.artwork_saves WHERE contact_id = $1`,
+      [session.contactId]
+    );
+    savedRows.forEach((r) => savedSet.add(r.archive_number));
+  }
 
   return (
     <div className="page">
@@ -106,14 +116,20 @@ export default async function ExclusivePage() {
                   ) : (
                     <span />
                   )}
-                  <Link
-                    href={`/collector/inquire?archive_number=${encodeURIComponent(
-                      art.archive_number
-                    )}&name=${encodeURIComponent(art.name)}`}
-                    className="btn-subtle"
-                  >
-                    Inquire
-                  </Link>
+                  <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                    <ArtworkSaveButton
+                      archiveNumber={art.archive_number}
+                      initialSaved={savedSet.has(art.archive_number)}
+                    />
+                    <Link
+                      href={`/collector/inquire?archive_number=${encodeURIComponent(
+                        art.archive_number
+                      )}&name=${encodeURIComponent(art.name)}`}
+                      className="btn-subtle"
+                    >
+                      Inquire
+                    </Link>
+                  </div>
                 </div>
                 {art.slug && (
                   <div className="card-footer">
