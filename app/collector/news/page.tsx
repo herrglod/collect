@@ -33,6 +33,7 @@ export default async function NewsPage() {
             <Link href="/collector">My Artworks</Link>
             <Link href="/collector/news">News</Link>
             <Link href="/collector/exclusive">Exclusive</Link>
+            <Link href="/collector/events">Events</Link>
           </nav>
         </div>
         <UserMenu name={displayName} />

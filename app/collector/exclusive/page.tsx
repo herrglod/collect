@@ -13,6 +13,7 @@ type ForSaleArtwork = {
   featured_image_url: string | null;
   price_public: number | null;
   category: string;
+  slug: string | null;
 };
 
 export default async function ExclusivePage() {
@@ -20,7 +21,7 @@ export default async function ExclusivePage() {
   if (!session) redirect('/login');
 
   const artworks = await query<ForSaleArtwork>(
-    `SELECT archive_number, name, year, medium, size, featured_image_url, price_public, category
+    `SELECT archive_number, name, year, medium, size, featured_image_url, price_public, category, slug
      FROM public.artworks
      WHERE for_sale = true
      ORDER BY updated_at DESC`
@@ -39,6 +40,7 @@ export default async function ExclusivePage() {
             <Link href="/collector">My Artworks</Link>
             <Link href="/collector/news">News</Link>
             <Link href="/collector/exclusive">Exclusive</Link>
+            <Link href="/collector/events">Events</Link>
           </nav>
         </div>
         <UserMenu name={displayName} />
@@ -113,6 +115,18 @@ export default async function ExclusivePage() {
                     Inquire
                   </Link>
                 </div>
+                {art.slug && (
+                  <div className="card-footer">
+                    <a
+                      href={`https://www.archive.glod.art/artworks/${art.slug}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="archive-link"
+                    >
+                      View in Archive ↗
+                    </a>
+                  </div>
+                )}
               </div>
             </div>
           ))}

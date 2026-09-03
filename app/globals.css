@@ -473,6 +473,27 @@ table.data-table th {
   color: var(--ink-soft);
 }
 
+.archive-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  text-decoration: none;
+}
+
+.archive-link:hover {
+  color: var(--ink);
+}
+
+.card-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
 .btn-subtle {
   display: inline-block;
   background: #eeeeee;
@@ -498,7 +519,7 @@ table.data-table th {
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--ink-soft);
-  margin-bottom: 40px;
+  margin-bottom: 13px;
   width: 100%;
   font-weight: 600;
 }

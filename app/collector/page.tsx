@@ -17,6 +17,7 @@ type OwnedArtwork = {
   description: string | null;
   featured_image_url: string | null;
   webflow_item_id: string | null;
+  slug: string | null;
   category: string;
   edition_type: string;
 };
@@ -31,6 +32,7 @@ type Exhibition = {
   year: number | null;
   hero_image_url: string | null;
   exhibition_type: string | null;
+  slug: string | null;
 };
 
 export default async function CollectorPage() {
@@ -51,7 +53,7 @@ export default async function CollectorPage() {
   const artworks = await query<OwnedArtwork>(
     `SELECT o.id AS ownership_id, o.archive_number, o.edition_number, o.acquired_at,
             a.name, a.year, a.medium, a.size, a.rarity, a.description,
-            a.featured_image_url, a.webflow_item_id, a.category, a.edition_type
+            a.featured_image_url, a.webflow_item_id, a.slug, a.category, a.edition_type
      FROM public.ownerships o
      JOIN public.artworks a ON a.archive_number = o.archive_number
      WHERE o.contact_id = $1 AND o.transferred_at IS NULL
@@ -71,7 +73,7 @@ export default async function CollectorPage() {
   const relatedExhibitions =
     ownedWebflowIds.length > 0
       ? await query<Exhibition>(
-          `SELECT id, name, venue, city, country, duration, year, hero_image_url, exhibition_type
+          `SELECT id, name, venue, city, country, duration, year, hero_image_url, exhibition_type, slug
            FROM public.exhibitions
            WHERE published = true AND artwork_webflow_ids && $1::text[]
            ORDER BY created_at DESC`,
@@ -82,7 +84,7 @@ export default async function CollectorPage() {
   const relatedIds = new Set(relatedExhibitions.map((e) => e.id));
 
   const otherExhibitions = await query<Exhibition>(
-    `SELECT id, name, venue, city, country, duration, year, hero_image_url, exhibition_type
+    `SELECT id, name, venue, city, country, duration, year, hero_image_url, exhibition_type, slug
      FROM public.exhibitions
      WHERE published = true
      ORDER BY created_at DESC`
@@ -102,6 +104,7 @@ export default async function CollectorPage() {
             <Link href="/collector">My Artworks</Link>
             <Link href="/collector/news">News</Link>
             <Link href="/collector/exclusive">Exclusive</Link>
+            <Link href="/collector/events">Events</Link>
           </nav>
         </div>
         <UserMenu name={displayName} />
@@ -170,6 +173,18 @@ export default async function CollectorPage() {
                 {art.edition_number && (
                   <div className="badge">Edition Number: {art.edition_number}</div>
                 )}
+                {art.slug && (
+                  <div className="card-footer">
+                    <a
+                      href={`https://www.archive.glod.art/artworks/${art.slug}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="archive-link"
+                    >
+                      View in Archive ↗
+                    </a>
+                  </div>
+                )}
               </div>
             </div>
           ))}
@@ -193,6 +208,18 @@ export default async function CollectorPage() {
                   <div className="card-meta">
                     {[ex.venue, ex.city, ex.country].filter(Boolean).join(', ')}
                   </div>
+                  {ex.slug && (
+                    <div className="card-footer">
+                      <a
+                        href={`https://www.archive.glod.art/exhibitions/${ex.slug}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="archive-link"
+                      >
+                        View in Archive ↗
+                      </a>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
@@ -217,6 +244,18 @@ export default async function CollectorPage() {
                   <div className="card-meta">
                     {[ex.venue, ex.city, ex.country].filter(Boolean).join(', ')}
                   </div>
+                  {ex.slug && (
+                    <div className="card-footer">
+                      <a
+                        href={`https://www.archive.glod.art/exhibitions/${ex.slug}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="archive-link"
+                      >
+                        View in Archive ↗
+                      </a>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
