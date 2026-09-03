@@ -106,12 +106,17 @@ function buildWelcomeEmailHtml(name: string): string {
     <ul style="font-size:15px;line-height:1.8;color:#111;padding-left:20px;margin:0 0 20px;">
       <li>View your artworks and their history in one place</li>
       <li>Follow artist news and studio updates</li>
+      <li>Receive invitations to exclusive events</li>
       <li>Get early, collector-only access to new and available works</li>
       <li>Reach out directly if you'd like to add a piece to your collection</li>
     </ul>
     <a href="${SITE_URL}/collector" style="display:inline-block;margin-top:4px;padding:10px 18px;border:1px solid #111;color:#111;text-decoration:none;font-size:13px;letter-spacing:0.5px;text-transform:uppercase;">
       Go to My Collection
     </a>
+    <p style="margin-top:28px;font-size:13px;line-height:1.6;color:#555;">
+      <strong>Coming soon:</strong> a collector marketplace, where you'll be able to list and trade pieces
+      from your own collection with other members of the GLOD Collectors Circle.
+    </p>
     <p style="margin-top:32px;font-size:11px;color:#999;">
       You're receiving this because a GLOD Collection account was just created for you.
     </p>
