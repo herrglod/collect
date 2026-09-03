@@ -5,16 +5,16 @@ export default function Home() {
     <div className="page">
       <header className="masthead">
         <div className="brand">
-          GLOD <span>Archive</span>
+          GLOD <span>Collection</span>
         </div>
       </header>
       <div className="eyebrow">Collector Platform</div>
-      <h1 className="title">Private Sammler- &amp; Admin-Plattform</h1>
+      <h1 className="title">Private Collector &amp; Admin Platform</h1>
       <p className="subtitle">
-        Zugang nur für eingeladene Sammler:innen, Partner und das GLOD-Team.
+        Access is reserved for invited collectors, partners, and the GLOD team.
       </p>
       <Link href="/login" className="btn">
-        Zum Login
+        Go to Login
       </Link>
     </div>
   );

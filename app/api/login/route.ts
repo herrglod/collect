@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
     const password = typeof body?.password === 'string' ? body.password : '';
 
     if (!email || !password) {
-      return NextResponse.json({ error: 'E-Mail und Passwort erforderlich.' }, { status: 400 });
+      return NextResponse.json({ error: 'Email and password are required.' }, { status: 400 });
     }
 
     const user = await queryOne<PlatformUser>(
@@ -30,12 +30,12 @@ export async function POST(req: NextRequest) {
     );
 
     if (!user) {
-      return NextResponse.json({ error: 'Ungültige Zugangsdaten.' }, { status: 401 });
+      return NextResponse.json({ error: 'Invalid credentials.' }, { status: 401 });
     }
 
     const valid = await bcrypt.compare(password, user.password_hash);
     if (!valid) {
-      return NextResponse.json({ error: 'Ungültige Zugangsdaten.' }, { status: 401 });
+      return NextResponse.json({ error: 'Invalid credentials.' }, { status: 401 });
     }
 
     const token = await signSession({
@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
     return res;
   } catch (err: any) {
     return NextResponse.json(
-      { error: `Serverfehler: ${err?.message || 'unbekannt'}` },
+      { error: `Server error: ${err?.message || 'unknown'}` },
       { status: 500 }
     );
   }

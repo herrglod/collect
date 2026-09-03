@@ -22,7 +22,7 @@ export default async function AssignPage() {
       <header className="masthead">
         <div className="masthead-left">
           <div className="brand">
-            GLOD <span>Archive</span>
+            GLOD <span>Collection</span>
           </div>
         </div>
         <UserMenu name={displayName} />

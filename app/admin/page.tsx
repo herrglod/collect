@@ -5,6 +5,7 @@ import { query } from '../../lib/db';
 import UserMenu from '../components/UserMenu';
 import OwnershipRow from '../components/OwnershipRow';
 import NewGalleryForm from '../components/NewGalleryForm';
+import AdminNav from '../components/AdminNav';
 
 type ActiveOwnership = {
   ownership_id: number;
@@ -52,11 +53,13 @@ export default async function AdminPage({
       <header className="masthead">
         <div className="masthead-left">
           <div className="brand">
-            GLOD <span>Archive</span>
+            GLOD <span>Collection</span>
           </div>
         </div>
         <UserMenu name={displayName} />
       </header>
+
+      <AdminNav active="assign" />
 
       <div className="eyebrow">Admin</div>
       <h1 className="title">Zuordnungen verwalten</h1>

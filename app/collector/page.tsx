@@ -17,6 +17,7 @@ type OwnedArtwork = {
   description: string | null;
   featured_image_url: string | null;
   webflow_item_id: string | null;
+  category: string;
 };
 
 type Exhibition = {
@@ -39,7 +40,7 @@ export default async function CollectorPage() {
     return (
       <div className="page">
         <div className="empty-state">
-          Dieser Account ist keinem Kontakt zugeordnet. Bitte wende dich an das GLOD-Team.
+          This account is not linked to a contact record. Please reach out to the GLOD team.
         </div>
       </div>
     );
@@ -48,13 +49,18 @@ export default async function CollectorPage() {
   const artworks = await query<OwnedArtwork>(
     `SELECT o.id AS ownership_id, o.archive_number, o.edition_number, o.acquired_at,
             a.name, a.year, a.medium, a.size, a.rarity, a.description,
-            a.featured_image_url, a.webflow_item_id
+            a.featured_image_url, a.webflow_item_id, a.category
      FROM public.ownerships o
      JOIN public.artworks a ON a.archive_number = o.archive_number
      WHERE o.contact_id = $1 AND o.transferred_at IS NULL
      ORDER BY o.acquired_at DESC`,
     [session.contactId]
   );
+
+  const uniqueCount = artworks.filter((a) => a.category === 'artwork' && !a.edition_number).length;
+  const limitedCount = artworks.filter((a) => a.category === 'artwork' && !!a.edition_number).length;
+  const objectsCount = artworks.filter((a) => a.category === 'objects').length;
+  const fashionCount = artworks.filter((a) => a.category === 'fashion').length;
 
   const ownedWebflowIds = artworks.map((a) => a.webflow_item_id).filter(Boolean) as string[];
 
@@ -87,28 +93,61 @@ export default async function CollectorPage() {
       <header className="masthead">
         <div className="masthead-left">
           <div className="brand">
-            GLOD <span>Archive</span>
+            GLOD <span>Collection</span>
           </div>
           <nav className="primary-nav">
             <Link href="/collector">My Collection</Link>
-            <Link href="#">News</Link>
-            <Link href="#">Exklusive</Link>
+            <Link href="/collector/news">News</Link>
+            <Link href="/collector/exclusive">Exclusive</Link>
           </nav>
         </div>
         <UserMenu name={displayName} />
       </header>
 
-      <div className="eyebrow">Sammler-Bereich</div>
-      <h1 className="title">Meine Sammlung</h1>
+      <div className="eyebrow">Collector Area</div>
+      <h1 className="title">My Collection</h1>
       <p className="subtitle">
         {artworks.length === 0
-          ? 'Dir sind aktuell noch keine Kunstwerke zugeordnet.'
-          : `${artworks.length} Werk${artworks.length === 1 ? '' : 'e'} in deinem Besitz.`}
+          ? 'No artworks are linked to your account yet.'
+          : `${artworks.length} piece${artworks.length === 1 ? '' : 's'} in your possession.`}
       </p>
+
+      <div className="stats-bar">
+        <div className="stat-label">My Holdings</div>
+        <div className="stat-item stat-highlight">
+          <div className="stat-value">{uniqueCount}</div>
+          <div className="stat-name">Unique Artwork{uniqueCount === 1 ? '' : 's'}</div>
+        </div>
+        <div className="stat-item">
+          <div className="stat-value">{limitedCount}</div>
+          <div className="stat-name">Limited Edition{limitedCount === 1 ? '' : 's'}</div>
+        </div>
+        {(objectsCount > 0 || fashionCount > 0) && (
+          <>
+            <div className="stat-item">
+              <div className="stat-value">{objectsCount}</div>
+              <div className="stat-name">Object{objectsCount === 1 ? '' : 's'}</div>
+            </div>
+            <div className="stat-item">
+              <div className="stat-value">{fashionCount}</div>
+              <div className="stat-name">Fashion Item{fashionCount === 1 ? '' : 's'}</div>
+            </div>
+          </>
+        )}
+      </div>
+
+      {uniqueCount === 0 && (
+        <div className="cta-banner">
+          You currently hold only Limited Editions or objects. <strong>Unique originals</strong> from
+          the archive are available to existing collectors — visit the{' '}
+          <Link href="/collector/exclusive">Exclusive</Link> area or{' '}
+          <Link href="/collector/connect-art">get in touch</Link> to learn more.
+        </div>
+      )}
 
       {artworks.length === 0 ? (
         <div className="empty-state">
-          Sobald dir das GLOD-Team ein Kunstwerk zuordnet, erscheint es hier.
+          As soon as the GLOD team links a piece to your account, it will appear here.
         </div>
       ) : (
         <div className="grid">
@@ -136,7 +175,7 @@ export default async function CollectorPage() {
 
       {relatedExhibitions.length > 0 && (
         <>
-          <h2 className="section-title">Ausstellungshistorie deiner Werke</h2>
+          <h2 className="section-title">Exhibition History of Your Works</h2>
           <div className="grid">
             {relatedExhibitions.map((ex) => (
               <div className="card" key={ex.id}>
@@ -160,7 +199,7 @@ export default async function CollectorPage() {
 
       {generalExhibitions.length > 0 && (
         <>
-          <h2 className="section-title">Aktuelle Ausstellungen &amp; Projekte</h2>
+          <h2 className="section-title">Current Exhibitions &amp; Projects</h2>
           <div className="grid">
             {generalExhibitions.map((ex) => (
               <div className="card" key={ex.id}>

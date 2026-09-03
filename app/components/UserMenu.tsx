@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 function getInitials(name: string): string {
   const parts = name.trim().split(/\s+/).filter(Boolean);
@@ -40,15 +41,15 @@ export default function UserMenu({ name }: { name: string }) {
       </button>
       {open && (
         <div className="user-menu-dropdown">
-          <button className="user-menu-item" type="button" onClick={() => setOpen(false)}>
+          <Link href="/collector/account" className="user-menu-item" onClick={() => setOpen(false)}>
             Account
-          </button>
-          <button className="user-menu-item" type="button" onClick={() => setOpen(false)}>
+          </Link>
+          <Link href="/collector/connect-art" className="user-menu-item" onClick={() => setOpen(false)}>
             Connect Art
-          </button>
-          <button className="user-menu-item" type="button" onClick={() => setOpen(false)}>
+          </Link>
+          <Link href="/collector/settings" className="user-menu-item" onClick={() => setOpen(false)}>
             Settings
-          </button>
+          </Link>
           <button className="user-menu-item" type="button" onClick={handleLogout}>
             Logout
           </button>

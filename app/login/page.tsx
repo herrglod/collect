@@ -23,7 +23,7 @@ function LoginForm() {
       });
       const data = await res.json();
       if (!res.ok) {
-        setError(data.error || 'Login fehlgeschlagen.');
+        setError(data.error || 'Login failed.');
         setLoading(false);
         return;
       }
@@ -31,7 +31,7 @@ function LoginForm() {
       router.push(next || (data.role === 'admin' ? '/admin' : '/collector'));
       router.refresh();
     } catch {
-      setError('Unerwarteter Fehler. Bitte erneut versuchen.');
+      setError('Unexpected error. Please try again.');
       setLoading(false);
     }
   }
@@ -40,18 +40,18 @@ function LoginForm() {
     <div className="page">
       <header className="masthead">
         <div className="brand">
-          GLOD <span>Archive</span>
+          GLOD <span>Collection</span>
         </div>
       </header>
       <div className="form-card">
-        <div className="eyebrow">Anmeldung</div>
+        <div className="eyebrow">Sign In</div>
         <h1 className="title" style={{ fontSize: 26, marginBottom: 24 }}>
           Login
         </h1>
         {error && <div className="error-msg">{error}</div>}
         <form onSubmit={handleSubmit}>
           <div className="field">
-            <label htmlFor="email">E-Mail</label>
+            <label htmlFor="email">Email</label>
             <input
               id="email"
               type="email"
@@ -62,7 +62,7 @@ function LoginForm() {
             />
           </div>
           <div className="field">
-            <label htmlFor="password">Passwort</label>
+            <label htmlFor="password">Password</label>
             <input
               id="password"
               type="password"
@@ -73,7 +73,7 @@ function LoginForm() {
             />
           </div>
           <button type="submit" className="btn" disabled={loading} style={{ width: '100%' }}>
-            {loading ? 'Wird geprüft…' : 'Einloggen'}
+            {loading ? 'Checking…' : 'Sign In'}
           </button>
         </form>
       </div>
