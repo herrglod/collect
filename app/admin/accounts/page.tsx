@@ -11,6 +11,7 @@ type ContactAccount = {
   name: string;
   type: string;
   contact_email: string | null;
+  contact_phone: string | null;
   platform_user_id: number | null;
   login_email: string | null;
   role: string | null;
@@ -22,7 +23,7 @@ export default async function AdminAccountsPage() {
   if (session.role !== 'admin') redirect('/collector');
 
   const contacts = await query<ContactAccount>(
-    `SELECT c.id AS contact_id, c.name, c.type, c.email AS contact_email,
+    `SELECT c.id AS contact_id, c.name, c.type, c.email AS contact_email, c.phone AS contact_phone,
             pu.id AS platform_user_id, pu.email AS login_email, pu.role
      FROM public.contacts c
      LEFT JOIN public.platform_users pu ON pu.contact_id = c.id

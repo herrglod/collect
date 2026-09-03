@@ -1,5 +1,7 @@
+import { SITE_URL } from './site';
+
 const RESEND_API_URL = 'https://api.resend.com/emails/batch';
-const SITE_URL = process.env.SITE_URL || 'https://glod-archive-platform.vercel.app';
+const RESEND_SINGLE_URL = 'https://api.resend.com/emails';
 
 type NewsEmailPost = {
   title: string | null;
@@ -88,5 +90,67 @@ export async function sendNewsNotification(post: NewsEmailPost, recipientEmails:
     } catch (err) {
       console.error('Resend batch send threw an error:', err);
     }
+  }
+}
+
+function buildWelcomeEmailHtml(name: string): string {
+  return `
+  <div style="font-family:Helvetica,Arial,sans-serif;max-width:560px;margin:0 auto;padding:32px 20px;">
+    <div style="font-size:12px;letter-spacing:1px;text-transform:uppercase;color:#888;margin-bottom:18px;">
+      GLOD Collection
+    </div>
+    <h1 style="font-size:20px;margin:0 0 20px;color:#111;">Welcome to the GLOD Collectors Circle, ${name}</h1>
+    <p style="font-size:15px;line-height:1.6;color:#111;">
+      Your personal collector account is now active. From here you can:
+    </p>
+    <ul style="font-size:15px;line-height:1.8;color:#111;padding-left:20px;margin:0 0 20px;">
+      <li>View your artworks and their history in one place</li>
+      <li>Follow artist news and studio updates</li>
+      <li>Get early, collector-only access to new and available works</li>
+      <li>Reach out directly if you'd like to add a piece to your collection</li>
+    </ul>
+    <a href="${SITE_URL}/collector" style="display:inline-block;margin-top:4px;padding:10px 18px;border:1px solid #111;color:#111;text-decoration:none;font-size:13px;letter-spacing:0.5px;text-transform:uppercase;">
+      Go to My Collection
+    </a>
+    <p style="margin-top:32px;font-size:11px;color:#999;">
+      You're receiving this because a GLOD Collection account was just created for you.
+    </p>
+  </div>`;
+}
+
+/**
+ * Sends the one-time welcome email after a collector activates their invite.
+ * Fails silently (logs, doesn't throw) so a broken email provider never blocks activation.
+ */
+export async function sendWelcomeEmail(toEmail: string, name: string): Promise<void> {
+  const apiKey = process.env.RESEND_API_KEY;
+  const fromAddress = process.env.RESEND_FROM_EMAIL;
+
+  if (!apiKey || !fromAddress) {
+    console.warn('RESEND_API_KEY or RESEND_FROM_EMAIL not set — skipping welcome email.');
+    return;
+  }
+
+  try {
+    const res = await fetch(RESEND_SINGLE_URL, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: fromAddress,
+        to: [toEmail],
+        subject: 'Welcome to the GLOD Collectors Circle',
+        html: buildWelcomeEmailHtml(name),
+      }),
+    });
+
+    if (!res.ok) {
+      const text = await res.text().catch(() => '');
+      console.error('Resend welcome email failed:', res.status, text);
+    }
+  } catch (err) {
+    console.error('Resend welcome email threw an error:', err);
   }
 }
