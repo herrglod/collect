@@ -284,6 +284,31 @@ table.data-table th {
   font-weight: 600;
 }
 
+.table-checkbox {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.bulk-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  background: #f7f7f7;
+  border: 1px solid var(--line);
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  font-size: 13px;
+}
+
+.bulk-bar select {
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  font-size: 13px;
+  background: var(--bg);
+}
+
 .tabs {
   display: flex;
   gap: 28px;
@@ -703,6 +728,8 @@ table.data-table th {
   font-size: 12px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+  position: relative;
+  z-index: 20;
 }
 
 .admin-subnav a {
@@ -716,6 +743,77 @@ table.data-table th {
   color: var(--ink);
   border-bottom-color: var(--ink);
   font-weight: 700;
+}
+
+.admin-subnav-item {
+  position: relative;
+  padding-bottom: 6px;
+  border-bottom: 2px solid transparent;
+}
+
+.admin-subnav-item.active {
+  color: var(--ink);
+  border-bottom-color: var(--ink);
+  font-weight: 700;
+}
+
+.admin-subnav-item > span {
+  cursor: default;
+  color: inherit;
+}
+
+.admin-subnav-dropdown {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: -16px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  padding: 10px 0;
+  min-width: 200px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  flex-direction: column;
+  gap: 0;
+}
+
+.admin-subnav-item:hover .admin-subnav-dropdown,
+.admin-subnav-item:focus-within .admin-subnav-dropdown {
+  display: flex;
+}
+
+.admin-subnav-dropdown a {
+  padding: 10px 18px;
+  border-bottom: none;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-subnav-dropdown a:hover {
+  background: #f7f7f7;
+}
+
+.admin-subnav-dropdown a.active {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.nav-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: #b0281a;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: normal;
+  text-transform: none;
+  line-height: 1;
 }
 
 .news-feed {

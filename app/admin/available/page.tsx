@@ -15,6 +15,7 @@ type AvailableArtwork = {
   year: number | null;
   for_sale: boolean;
   price_public: number | null;
+  warehouse_id: number | null;
 };
 
 export default async function AdminAvailablePage() {
@@ -24,11 +25,15 @@ export default async function AdminAvailablePage() {
 
   const artworks = await query<AvailableArtwork>(
     `SELECT a.archive_number, a.name, a.featured_image_url, a.category, a.edition_type, a.year,
-            a.for_sale, a.price_public
+            a.for_sale, a.price_public, a.warehouse_id
      FROM public.artworks a
      LEFT JOIN public.ownerships o ON o.archive_number = a.archive_number AND o.transferred_at IS NULL
      WHERE o.id IS NULL
      ORDER BY a.archive_number ASC`
+  );
+
+  const warehouses = await query<{ id: number; name: string }>(
+    `SELECT id, name FROM public.warehouses ORDER BY name ASC`
   );
 
   const [{ count: totalCount }] = await query<{ count: string }>(
@@ -57,7 +62,7 @@ export default async function AdminAvailablePage() {
         Use this list to quickly find pieces you can assign to a collector or gallery partner.
       </p>
 
-      <AvailableArtworksTable artworks={artworks} />
+      <AvailableArtworksTable artworks={artworks} warehouses={warehouses} />
     </div>
   );
 }
