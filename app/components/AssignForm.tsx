@@ -12,10 +12,18 @@ function contactLabel(c: Contact): string {
   return `${c.name}${galleryTag}${emailTag} — #${c.id}`;
 }
 
-export default function AssignForm({ contacts, artworks }: { contacts: Contact[]; artworks: Artwork[] }) {
+export default function AssignForm({
+  contacts,
+  artworks,
+  initialArchiveNumber,
+}: {
+  contacts: Contact[];
+  artworks: Artwork[];
+  initialArchiveNumber?: string;
+}) {
   const router = useRouter();
   const [contactQuery, setContactQuery] = useState('');
-  const [archiveNumber, setArchiveNumber] = useState('');
+  const [archiveNumber, setArchiveNumber] = useState(initialArchiveNumber ?? '');
   const [editionNumber, setEditionNumber] = useState('');
   const [notes, setNotes] = useState('');
   const [error, setError] = useState<string | null>(null);

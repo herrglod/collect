@@ -3,12 +3,15 @@ import Link from 'next/link';
 export default function AdminNav({
   active,
 }: {
-  active: 'assign' | 'requests' | 'news' | 'events' | 'artworks' | 'inquiries' | 'accounts';
+  active: 'assign' | 'available' | 'requests' | 'news' | 'events' | 'artworks' | 'inquiries' | 'accounts';
 }) {
   return (
     <nav className="admin-subnav">
       <Link href="/admin" className={active === 'assign' ? 'active' : ''}>
         Assignments
+      </Link>
+      <Link href="/admin/available" className={active === 'available' ? 'active' : ''}>
+        Available
       </Link>
       <Link href="/admin/requests" className={active === 'requests' ? 'active' : ''}>
         Connect Art Requests

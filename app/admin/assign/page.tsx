@@ -5,7 +5,11 @@ import { query } from '../../../lib/db';
 import UserMenu from '../../components/UserMenu';
 import AssignForm from '../../components/AssignForm';
 
-export default async function AssignPage() {
+export default async function AssignPage({
+  searchParams,
+}: {
+  searchParams?: { archive_number?: string };
+}) {
   const session = await getServerSession();
   if (!session) redirect('/login');
   if (session.role !== 'admin') redirect('/collector');
@@ -40,7 +44,7 @@ export default async function AssignPage() {
         editions, you can also record the specific edition number.
       </p>
 
-      <AssignForm contacts={contacts} artworks={artworks} />
+      <AssignForm contacts={contacts} artworks={artworks} initialArchiveNumber={searchParams?.archive_number} />
     </div>
   );
 }
