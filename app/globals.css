@@ -46,8 +46,13 @@ a {
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid var(--line);
+  padding-top: 18px;
   padding-bottom: 18px;
   margin-bottom: 56px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--bg);
 }
 
 .masthead-left {
@@ -1099,13 +1104,27 @@ table.data-table th {
     grid-template-columns: 1fr;
   }
   .masthead {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 16px;
+    gap: 12px;
+    padding-top: 14px;
+    padding-bottom: 14px;
   }
   .masthead-left {
-    flex-wrap: wrap;
-    gap: 16px;
+    flex-wrap: nowrap;
+    gap: 14px;
+    min-width: 0;
+  }
+  .masthead .brand {
+    font-size: 14px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .user-menu-name {
+    display: none;
+  }
+  .user-avatar {
+    width: 38px;
+    height: 38px;
+    font-size: 13px;
   }
   h1.title {
     font-size: 32px;

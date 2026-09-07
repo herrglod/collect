@@ -153,7 +153,7 @@ export default async function CollectorPage() {
         <div className="cta-banner">
           You currently hold only Limited Editions or objects. <strong>Unique originals</strong> from
           the archive are available to existing collectors — visit the{' '}
-          <Link href="/collector/exclusive">Exclusive</Link> area or{' '}
+          <Link href="/collector/exclusive">Exclusive Art</Link> area or{' '}
           <Link href="/collector/connect-art">get in touch</Link> to learn more.
         </div>
       )}

@@ -10,6 +10,7 @@ type ForSaleArtwork = {
   year: number | null;
   medium: string | null;
   size: string | null;
+  rarity: string | null;
   featured_image_url: string | null;
   price_public: number | null;
   category: string;
@@ -21,7 +22,7 @@ export default async function ExclusivePage() {
   if (!session) redirect('/login');
 
   const artworks = await query<ForSaleArtwork>(
-    `SELECT archive_number, name, year, medium, size, featured_image_url, price_public, category, slug
+    `SELECT archive_number, name, year, medium, size, rarity, featured_image_url, price_public, category, slug
      FROM public.artworks
      WHERE for_sale = true AND for_sale_audience IN ('collectors', 'both')
      ORDER BY updated_at DESC`
@@ -42,7 +43,7 @@ export default async function ExclusivePage() {
         ← Back to My Artworks
       </Link>
 
-      <div className="eyebrow">Exclusive</div>
+      <div className="eyebrow">Exclusive Art</div>
       <h1 className="title" style={{ fontSize: 32 }}>
         Available Works &amp; Specials
       </h1>
@@ -80,6 +81,7 @@ export default async function ExclusivePage() {
                 <div className="card-meta">
                   {[art.year, art.medium, art.size].filter(Boolean).join(' · ')}
                 </div>
+                {art.rarity && <div className="badge">{art.rarity}</div>}
                 <div
                   style={{
                     display: 'flex',

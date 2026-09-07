@@ -9,6 +9,7 @@ type ForSaleArtwork = {
   year: number | null;
   medium: string | null;
   size: string | null;
+  rarity: string | null;
   featured_image_url: string | null;
   price_partner: number | null;
   category: string;
@@ -21,7 +22,7 @@ export default async function PartnerAvailablePage() {
   if (!session) redirect('/login');
 
   const artworks = await query<ForSaleArtwork>(
-    `SELECT archive_number, name, year, medium, size, featured_image_url, price_partner, category, edition_type, slug
+    `SELECT archive_number, name, year, medium, size, rarity, featured_image_url, price_partner, category, edition_type, slug
      FROM public.artworks
      WHERE for_sale = true AND for_sale_audience IN ('gallery', 'both')
      ORDER BY updated_at DESC`

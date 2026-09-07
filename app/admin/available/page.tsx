@@ -23,12 +23,19 @@ export default async function AdminAvailablePage() {
   if (!session) redirect('/login');
   if (session.role !== 'admin') redirect('/collector');
 
+  // Unique pieces are only "available" while nobody owns them yet. Limited Editions can have
+  // several simultaneous owners (different collectors/partners each holding a copy), so they
+  // should always stay assignable here regardless of existing ownerships — otherwise the system
+  // wrongly treats the whole edition as "sold" after the very first copy is assigned.
   const artworks = await query<AvailableArtwork>(
     `SELECT a.archive_number, a.name, a.featured_image_url, a.category, a.edition_type, a.year,
             a.for_sale, a.price_public, a.warehouse_id
      FROM public.artworks a
-     LEFT JOIN public.ownerships o ON o.archive_number = a.archive_number AND o.transferred_at IS NULL
-     WHERE o.id IS NULL
+     WHERE a.edition_type = 'limited_edition'
+        OR NOT EXISTS (
+             SELECT 1 FROM public.ownerships o
+             WHERE o.archive_number = a.archive_number AND o.transferred_at IS NULL
+           )
      ORDER BY a.archive_number ASC`
   );
 
@@ -58,8 +65,8 @@ export default async function AdminAvailablePage() {
       <div className="eyebrow">Admin</div>
       <h1 className="title">Available Artworks</h1>
       <p className="subtitle">
-        {artworks.length} of {totalCount} artworks in the archive currently have no owner assigned.
-        Use this list to quickly find pieces you can assign to a collector or gallery partner.
+        {artworks.length} of {totalCount} artworks in the archive are available to assign — Unique
+        pieces with no owner yet, plus all Limited Editions (which can have several owners at once).
       </p>
 
       <AvailableArtworksTable artworks={artworks} warehouses={warehouses} />

@@ -92,7 +92,7 @@ export default async function CollectorRequestsPage() {
       <h2 className="section-title">Purchase Inquiries</h2>
       {purchaseInquiries.length === 0 ? (
         <div className="empty-state">
-          No purchase inquiries yet. Browse the <Link href="/collector/exclusive">Exclusive</Link>{' '}
+          No purchase inquiries yet. Browse the <Link href="/collector/exclusive">Exclusive Art</Link>{' '}
           section to see what's available.
         </div>
       ) : (

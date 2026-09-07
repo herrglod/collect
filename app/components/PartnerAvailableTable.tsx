@@ -9,6 +9,7 @@ type Artwork = {
   year: number | null;
   medium: string | null;
   size: string | null;
+  rarity: string | null;
   featured_image_url: string | null;
   price_partner: number | null;
   category: string;
@@ -69,6 +70,7 @@ export default function PartnerAvailableTable({ artworks }: { artworks: Artwork[
                 <div className="card-number">{art.archive_number}</div>
                 <h3 className="card-title">{art.name}</h3>
                 <div className="card-meta">{[art.year, art.medium, art.size].filter(Boolean).join(' · ')}</div>
+                {art.rarity && <div className="badge">{art.rarity}</div>}
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 10, gap: 12 }}>
                   {art.price_partner != null ? (
                     <div className="exclusive-price" style={{ marginTop: 0 }}>

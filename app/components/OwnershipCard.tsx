@@ -12,15 +12,23 @@ type ActiveOwnership = {
   artwork_name: string;
   artwork_image: string | null;
   edition_number: string | null;
-  acquired_at: string;
+  acquired_at: string | Date;
 };
+
+// `acquired_at` is a Postgres `date` column. Depending on how it crosses the server/client
+// boundary it can arrive as either an ISO string or an actual Date instance — normalize both
+// to the "YYYY-MM-DD" format a <input type="date"> expects.
+function toDateInputValue(value: string | Date): string {
+  const d = new Date(value);
+  return Number.isNaN(d.getTime()) ? '' : d.toISOString().slice(0, 10);
+}
 
 export default function OwnershipCard({ ownership }: { ownership: ActiveOwnership }) {
   const router = useRouter();
   const [editing, setEditing] = useState(false);
   const [archiveNumber, setArchiveNumber] = useState(ownership.archive_number);
   const [editionNumber, setEditionNumber] = useState(ownership.edition_number ?? '');
-  const [acquiredAt, setAcquiredAt] = useState(ownership.acquired_at.slice(0, 10));
+  const [acquiredAt, setAcquiredAt] = useState(toDateInputValue(ownership.acquired_at));
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -28,7 +36,7 @@ export default function OwnershipCard({ ownership }: { ownership: ActiveOwnershi
     setEditing(false);
     setArchiveNumber(ownership.archive_number);
     setEditionNumber(ownership.edition_number ?? '');
-    setAcquiredAt(ownership.acquired_at.slice(0, 10));
+    setAcquiredAt(toDateInputValue(ownership.acquired_at));
     setError(null);
   }
 

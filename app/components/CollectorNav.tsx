@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation';
 const LINKS = [
   { href: '/collector', label: 'My Artworks' },
   { href: '/collector/news', label: 'News' },
-  { href: '/collector/exclusive', label: 'Exclusive' },
+  { href: '/collector/exclusive', label: 'Exclusive Art' },
   { href: '/collector/events', label: 'Events' },
   { href: '/collector/marketplace', label: 'Marketplace' },
 ];
