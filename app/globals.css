@@ -1104,19 +1104,32 @@ table.data-table th {
     grid-template-columns: 1fr;
   }
   .masthead {
-    gap: 12px;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    column-gap: 12px;
     padding-top: 14px;
     padding-bottom: 14px;
   }
+  /* Expose brand link and mobile-nav trigger as direct grid items of .masthead,
+     so they can be placed independently (menu left, brand centered) regardless
+     of their nesting inside .masthead-left in the markup. */
   .masthead-left {
-    flex-wrap: nowrap;
-    gap: 14px;
-    min-width: 0;
+    display: contents;
   }
   .masthead .brand {
-    font-size: 14px;
+    grid-column: 2;
+    justify-self: center;
+    font-size: 20px;
     white-space: nowrap;
-    flex-shrink: 0;
+  }
+  .mobile-nav {
+    grid-column: 1;
+    justify-self: start;
+  }
+  .user-menu {
+    grid-column: 3;
+    justify-self: end;
   }
   .user-menu-name {
     display: none;

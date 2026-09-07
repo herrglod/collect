@@ -48,7 +48,7 @@ export default function CollectorNav() {
           onClick={() => setOpen((v) => !v)}
           aria-label="Menu"
         >
-          Menu {open ? '▴' : '▾'}
+          Menu
         </button>
         {open && (
           <div className="mobile-nav-dropdown">

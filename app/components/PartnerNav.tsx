@@ -42,7 +42,7 @@ export default function PartnerNav() {
 
       <div className="mobile-nav" ref={rootRef}>
         <button type="button" className="mobile-nav-trigger" onClick={() => setOpen((v) => !v)} aria-label="Menu">
-          Menu {open ? '▴' : '▾'}
+          Menu
         </button>
         {open && (
           <div className="mobile-nav-dropdown">
