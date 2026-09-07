@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { getServerSession } from '../../lib/auth-server';
 import { query } from '../../lib/db';
-import ArtworkStatusControl from '../components/ArtworkStatusControl';
+import EditionNumberRequestForm from '../components/EditionNumberRequestForm';
 
 type OwnedArtwork = {
   ownership_id: number;
@@ -33,6 +33,19 @@ type Exhibition = {
   year: number | null;
   hero_image_url: string | null;
   exhibition_type: string | null;
+  slug: string | null;
+};
+
+type Collaboration = {
+  id: string;
+  name: string;
+  venue_name: string | null;
+  brand_partner: string | null;
+  city: string | null;
+  country: string | null;
+  duration: string | null;
+  year: number | null;
+  hero_image_url: string | null;
   slug: string | null;
 };
 
@@ -92,7 +105,15 @@ export default async function CollectorPage() {
      ORDER BY created_at DESC`
   );
 
-  const generalExhibitions = otherExhibitions.filter((e) => !relatedIds.has(e.id)).slice(0, 6);
+  const generalExhibitions = otherExhibitions.filter((e) => !relatedIds.has(e.id)).slice(0, 3);
+
+  const recentCollaborations = await query<Collaboration>(
+    `SELECT id, name, venue_name, brand_partner, city, country, duration, year, hero_image_url, slug
+     FROM public.collaborations
+     WHERE published = true
+     ORDER BY sort_date DESC NULLS LAST, created_at DESC
+     LIMIT 3`
+  );
 
   return (
     <>
@@ -156,10 +177,13 @@ export default async function CollectorPage() {
                 <div className="card-meta">
                   {[art.year, art.medium, art.size].filter(Boolean).join(' · ')}
                 </div>
-                {art.edition_number && (
+                {art.edition_number ? (
                   <div className="badge">Edition Number: {art.edition_number}</div>
+                ) : (
+                  art.edition_type === 'limited_edition' && (
+                    <EditionNumberRequestForm archiveNumber={art.archive_number} />
+                  )
                 )}
-                <ArtworkStatusControl ownershipId={art.ownership_id} status={art.status} />
                 {art.slug && (
                   <div className="card-footer">
                     <a
@@ -240,7 +264,7 @@ export default async function CollectorPage() {
 
       {generalExhibitions.length > 0 && (
         <>
-          <h2 className="section-title">Exhibitions &amp; Collaborations</h2>
+          <h2 className="section-title">Recent Art Exhibitions</h2>
           <div className="grid">
             {generalExhibitions.map((ex) => (
               <div className="card" key={ex.id}>
@@ -259,6 +283,42 @@ export default async function CollectorPage() {
                     <div className="card-footer">
                       <a
                         href={`https://www.archive.glod.art/exhibitions/${ex.slug}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="archive-link"
+                      >
+                        View in Archive ↗
+                      </a>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+
+      {recentCollaborations.length > 0 && (
+        <>
+          <h2 className="section-title">Recent Collaborations</h2>
+          <div className="grid">
+            {recentCollaborations.map((c) => (
+              <div className="card" key={c.id}>
+                {c.hero_image_url ? (
+                  <img className="card-image" src={c.hero_image_url} alt={c.name} />
+                ) : (
+                  <div className="card-image" />
+                )}
+                <div className="card-body">
+                  <div className="card-number">{c.brand_partner || 'Collaboration'}{c.year ? ` · ${c.year}` : ''}</div>
+                  <h3 className="card-title">{c.name}</h3>
+                  <div className="card-meta">
+                    {[c.venue_name, c.city, c.country].filter(Boolean).join(', ')}
+                  </div>
+                  {c.slug && (
+                    <div className="card-footer">
+                      <a
+                        href={`https://www.archive.glod.art/collaborations/${c.slug}`}
                         target="_blank"
                         rel="noreferrer"
                         className="archive-link"

@@ -23,7 +23,7 @@ export default async function ExclusivePage() {
   const artworks = await query<ForSaleArtwork>(
     `SELECT archive_number, name, year, medium, size, featured_image_url, price_public, category, slug
      FROM public.artworks
-     WHERE for_sale = true
+     WHERE for_sale = true AND for_sale_audience IN ('collectors', 'both')
      ORDER BY updated_at DESC`
   );
 

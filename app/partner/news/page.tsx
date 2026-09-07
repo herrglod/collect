@@ -39,13 +39,15 @@ export default async function PartnerNewsPage() {
             <div className="news-card" key={p.id}>
               {p.image_url && <img className="news-image" src={p.image_url} alt="" />}
               <div className="news-body">
-                <div className="news-date">
-                  {new Date(p.posted_at).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                  })}
-                  {p.category ? ` · ${p.category}` : ''}
+                <div className="news-header-row">
+                  <div className="news-date">
+                    {new Date(p.posted_at).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                    })}
+                  </div>
+                  {p.category && <span className="news-category-pill">{p.category}</span>}
                 </div>
                 {p.title && (
                   <h3 className="card-title" style={{ marginBottom: 8 }}>
@@ -55,7 +57,7 @@ export default async function PartnerNewsPage() {
                 <div className="news-content">{p.content}</div>
                 {p.source_url && (
                   <a href={p.source_url} target="_blank" rel="noreferrer" className="news-source-link">
-                    Read More ↗
+                    VIEW MORE <span aria-hidden="true">↗</span>
                   </a>
                 )}
               </div>

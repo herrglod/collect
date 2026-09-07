@@ -32,18 +32,26 @@ export default function ArtworksTable({
 }) {
   const router = useRouter();
   const [search, setSearch] = useState('');
+  const [showSold, setShowSold] = useState(false);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [bulkWarehouse, setBulkWarehouse] = useState('');
   const [bulkLoading, setBulkLoading] = useState(false);
   const [bulkError, setBulkError] = useState<string | null>(null);
 
+  const soldCount = useMemo(() => artworks.filter((a) => a.is_owned).length, [artworks]);
+
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
-    if (!q) return artworks;
-    return artworks.filter(
-      (a) => a.archive_number.toLowerCase().includes(q) || a.name.toLowerCase().includes(q)
-    );
-  }, [artworks, search]);
+    return artworks.filter((a) => {
+      const matchesSearch =
+        !q || a.archive_number.toLowerCase().includes(q) || a.name.toLowerCase().includes(q);
+      if (!matchesSearch) return false;
+      // A search always overrides the sold filter, so looking up a specific
+      // (possibly already sold) piece by name or archive number still works.
+      if (!q && !showSold && a.is_owned) return false;
+      return true;
+    });
+  }, [artworks, search, showSold]);
 
   const selectable = filtered.filter((a) => !a.is_owned);
   const allSelectableSelected =
@@ -101,14 +109,20 @@ export default function ArtworksTable({
 
   return (
     <div>
-      <div className="field" style={{ maxWidth: 360, marginBottom: 24 }}>
-        <label htmlFor="artwork-search">Search</label>
-        <input
-          id="artwork-search"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Name or archive no…"
-        />
+      <div style={{ display: 'flex', alignItems: 'flex-end', gap: 24, marginBottom: 24, flexWrap: 'wrap' }}>
+        <div className="field" style={{ maxWidth: 360, marginBottom: 0 }}>
+          <label htmlFor="artwork-search">Search</label>
+          <input
+            id="artwork-search"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Name or archive no…"
+          />
+        </div>
+        <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, paddingBottom: 10, cursor: 'pointer' }}>
+          <input type="checkbox" checked={showSold} onChange={(e) => setShowSold(e.target.checked)} />
+          Show sold ({soldCount})
+        </label>
       </div>
 
       {selected.size > 0 && (

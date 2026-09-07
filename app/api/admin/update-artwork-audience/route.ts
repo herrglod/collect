@@ -26,9 +26,15 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid partner price.' }, { status: 400 });
   }
 
+  // Turning on gallery visibility ('gallery' or 'both') is meant to make the piece
+  // actually for sale to that partner — without this, toggling the switch alone
+  // never flips the shared `for_sale` flag, so the artwork silently never appears
+  // on /partner/available even though it looks "on" in the admin table.
+  const makesForSale = audience === 'gallery' || audience === 'both';
+
   const row = await queryOne(
     `UPDATE public.artworks
-     SET for_sale_audience = $2, price_partner = $3, updated_at = now()
+     SET for_sale_audience = $2, price_partner = $3, updated_at = now()${makesForSale ? ', for_sale = true' : ''}
      WHERE archive_number = $1
      RETURNING archive_number`,
     [archiveNumber, audience, pricePartner]

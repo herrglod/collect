@@ -35,12 +35,16 @@ export default async function AdminArtworksPage({
   const artworks = await query<Artwork>(
     `SELECT a.archive_number, a.name, a.featured_image_url, a.category, a.edition_type, a.for_sale,
             a.price_public, a.for_sale_audience, a.price_partner, a.warehouse_id,
-            COUNT(s.id)::int AS saved_count,
-            (o.id IS NOT NULL) AS is_owned
+            COUNT(DISTINCT s.id)::int AS saved_count,
+            -- Only Unique pieces are truly "Sold" once owned (there is only one exemplar).
+            -- Limited Editions can have several copies out (e.g. with a gallery partner on
+            -- commission) while still having further copies available, so they should never
+            -- be flatly marked "Sold" here.
+            (a.edition_type = 'unique' AND bool_or(o.id IS NOT NULL)) AS is_owned
      FROM public.artworks a
      LEFT JOIN public.artwork_saves s ON s.archive_number = a.archive_number
      LEFT JOIN public.ownerships o ON o.archive_number = a.archive_number AND o.transferred_at IS NULL
-     GROUP BY a.archive_number, o.id
+     GROUP BY a.archive_number
      ORDER BY a.archive_number ASC`
   );
 

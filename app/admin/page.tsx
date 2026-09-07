@@ -3,10 +3,9 @@ import { redirect } from 'next/navigation';
 import { getServerSession, getSessionDisplayName } from '../../lib/auth-server';
 import { query } from '../../lib/db';
 import UserMenu from '../components/UserMenu';
-import OwnershipRow from '../components/OwnershipRow';
 import NewGalleryForm from '../components/NewGalleryForm';
 import AdminNav from '../components/AdminNav';
-import GalleryPartnerList from '../components/GalleryPartnerList';
+import AssignmentsPanel from '../components/AssignmentsPanel';
 
 type ActiveOwnership = {
   ownership_id: number;
@@ -95,26 +94,8 @@ export default async function AdminPage({
         <div className="empty-state">
           {activeTab === 'gallery' ? 'No gallery has any artworks assigned yet.' : 'No artworks assigned yet.'}
         </div>
-      ) : activeTab === 'gallery' ? (
-        <GalleryPartnerList ownerships={ownerships} />
       ) : (
-        <table className="data-table">
-          <thead>
-            <tr>
-              <th>Collector</th>
-              <th>Archive No.</th>
-              <th>Artwork</th>
-              <th>Edition</th>
-              <th>Since</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {ownerships.map((o) => (
-              <OwnershipRow key={o.ownership_id} ownership={o} />
-            ))}
-          </tbody>
-        </table>
+        <AssignmentsPanel ownerships={ownerships} activeTab={activeTab} />
       )}
     </div>
   );

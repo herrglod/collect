@@ -29,14 +29,17 @@ export default async function InvitePage({ params }: { params: { token: string }
     accepted_at: string | null;
     contact_name: string;
     contact_email: string | null;
+    contact_type: string | null;
   }>(
     `SELECT i.id, i.contact_id, i.email, i.expires_at, i.accepted_at,
-            c.name AS contact_name, c.email AS contact_email
+            c.name AS contact_name, c.email AS contact_email, c.type AS contact_type
      FROM public.collector_invites i
      JOIN public.contacts c ON c.id = i.contact_id
      WHERE i.token = $1`,
     [params.token]
   );
+
+  const isGallery = invite?.contact_type === 'gallery';
 
   if (!invite) {
     return (
@@ -80,14 +83,17 @@ export default async function InvitePage({ params }: { params: { token: string }
         Welcome, {invite.contact_name}
       </h1>
       <p className="subtitle" style={{ maxWidth: 560 }}>
-        We'd like to invite you to your personal GLOD Collection — a private space where you can view
-        your artworks, follow artist news, and get collector-only access to available works.
+        {isGallery
+          ? "We'd like to invite you to your GLOD Collection gallery portal — a private space to track the artworks on commission with you, follow artist news, and browse pieces available for your gallery."
+          : "We'd like to invite you to your personal GLOD Collection — a private space where you can view your artworks, follow artist news, and get collector-only access to available works."}
       </p>
 
       {artworks.length > 0 && (
         <>
           <h2 className="section-title" style={{ marginTop: 32 }}>
-            You are the owner of {artworks.length} artwork{artworks.length > 1 ? 's' : ''}
+            {isGallery
+              ? `This is your inventory — ${artworks.length} artwork${artworks.length > 1 ? 's' : ''} currently with you`
+              : `You are the owner of ${artworks.length} artwork${artworks.length > 1 ? 's' : ''}`}
           </h2>
           <div className="grid" style={{ marginBottom: 32 }}>
             {artworks.map((a) => (

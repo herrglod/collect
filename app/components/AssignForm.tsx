@@ -24,7 +24,7 @@ export default function AssignForm({
   const router = useRouter();
   const [contactQuery, setContactQuery] = useState('');
   const [archiveNumber, setArchiveNumber] = useState(initialArchiveNumber ?? '');
-  const [editionNumber, setEditionNumber] = useState('');
+  const [editionNumbers, setEditionNumbers] = useState<string[]>(['']);
   const [notes, setNotes] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -56,7 +56,7 @@ export default function AssignForm({
         body: JSON.stringify({
           contact_id: matchedContact.id,
           archive_number: selectedArtwork.archive_number,
-          edition_number: editionNumber.trim() || null,
+          edition_numbers: editionNumbers.map((v) => v.trim()),
           notes: notes.trim() || null,
         }),
       });
@@ -66,10 +66,14 @@ export default function AssignForm({
         setLoading(false);
         return;
       }
-      setSuccess(`"${data.artwork_name}" was assigned to ${matchedContact.name}.`);
+      const count = data.assignedCount ?? 1;
+      setSuccess(
+        `"${data.artwork_name}" was assigned to ${matchedContact.name}${count > 1 ? ` (${count} copies)` : ''}.` +
+          (data.errors ? ` ${data.errors.join(' ')}` : '')
+      );
       setContactQuery('');
       setArchiveNumber('');
-      setEditionNumber('');
+      setEditionNumbers(['']);
       setNotes('');
       router.refresh();
     } catch {
@@ -77,6 +81,18 @@ export default function AssignForm({
     } finally {
       setLoading(false);
     }
+  }
+
+  function updateEditionNumber(index: number, value: string) {
+    setEditionNumbers((prev) => prev.map((v, i) => (i === index ? value : v)));
+  }
+
+  function addEditionNumberField() {
+    setEditionNumbers((prev) => [...prev, '']);
+  }
+
+  function removeEditionNumberField(index: number) {
+    setEditionNumbers((prev) => (prev.length === 1 ? prev : prev.filter((_, i) => i !== index)));
   }
 
   return (
@@ -128,16 +144,58 @@ export default function AssignForm({
         </div>
 
         <div className="field">
-          <label htmlFor="edition">Edition Number (Optional)</label>
-          <input
-            id="edition"
-            value={editionNumber}
-            onChange={(e) => setEditionNumber(e.target.value)}
-            placeholder="e.g. 3/20"
-          />
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <label htmlFor="edition" style={{ marginBottom: 0 }}>
+              Edition Number (Optional)
+            </label>
+            <button
+              type="button"
+              onClick={addEditionNumberField}
+              style={{
+                background: 'transparent',
+                border: '1px solid var(--line)',
+                padding: '3px 10px',
+                fontSize: 11,
+                cursor: 'pointer',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+              }}
+            >
+              + Add
+            </button>
+          </div>
+          {editionNumbers.map((value, index) => (
+            <div key={index} style={{ display: 'flex', gap: 8, marginTop: index === 0 ? 0 : 8 }}>
+              <input
+                id={index === 0 ? 'edition' : undefined}
+                value={value}
+                onChange={(e) => updateEditionNumber(index, e.target.value)}
+                placeholder="e.g. 3/20"
+              />
+              {editionNumbers.length > 1 && (
+                <button
+                  type="button"
+                  onClick={() => removeEditionNumberField(index)}
+                  aria-label="Remove"
+                  style={{
+                    background: 'transparent',
+                    border: '1px solid var(--line)',
+                    padding: '0 12px',
+                    fontSize: 14,
+                    cursor: 'pointer',
+                    flexShrink: 0,
+                  }}
+                >
+                  ×
+                </button>
+              )}
+            </div>
+          ))}
           <div className="field-hint">
             Display-only text for the collector (e.g. "Edition Number: 3/20"). Whether the piece counts
-            as Unique or Limited Edition is controlled by the category under "Manage Artworks".
+            as Unique or Limited Edition is controlled by the category under "Manage Artworks". Add
+            multiple fields to assign several copies (e.g. editions 1/10 – 10/10) to the same contact
+            at once.
           </div>
         </div>
 

@@ -20,6 +20,7 @@ export default function OwnershipCard({ ownership }: { ownership: ActiveOwnershi
   const [editing, setEditing] = useState(false);
   const [archiveNumber, setArchiveNumber] = useState(ownership.archive_number);
   const [editionNumber, setEditionNumber] = useState(ownership.edition_number ?? '');
+  const [acquiredAt, setAcquiredAt] = useState(ownership.acquired_at.slice(0, 10));
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -27,6 +28,7 @@ export default function OwnershipCard({ ownership }: { ownership: ActiveOwnershi
     setEditing(false);
     setArchiveNumber(ownership.archive_number);
     setEditionNumber(ownership.edition_number ?? '');
+    setAcquiredAt(ownership.acquired_at.slice(0, 10));
     setError(null);
   }
 
@@ -41,6 +43,7 @@ export default function OwnershipCard({ ownership }: { ownership: ActiveOwnershi
           ownership_id: ownership.ownership_id,
           archive_number: archiveNumber.trim().toUpperCase(),
           edition_number: editionNumber.trim() || null,
+          acquired_at: acquiredAt || null,
         }),
       });
       const data = await res.json().catch(() => ({}));
@@ -110,21 +113,34 @@ export default function OwnershipCard({ ownership }: { ownership: ActiveOwnershi
           ) : (
             ownership.archive_number
           )}
-          {' · '}
-          {editing ? (
-            <input
-              value={editionNumber}
-              onChange={(e) => setEditionNumber(e.target.value)}
-              placeholder="Edition e.g. 3/20"
-              style={{ width: 100, padding: '4px 6px', border: '1px solid var(--line)', fontSize: 12 }}
-            />
-          ) : (
-            ownership.edition_number || 'Unique'
-          )}
-          {' · since '}
-          {new Date(ownership.acquired_at).toLocaleDateString('en-GB')}
         </div>
         {error && <div style={{ color: '#b0281a', fontSize: 11, marginTop: 4 }}>{error}</div>}
+      </div>
+
+      <div style={{ width: editing ? 110 : 90, textAlign: 'right', flexShrink: 0, fontSize: 12, color: 'var(--ink-soft)' }}>
+        {editing ? (
+          <input
+            value={editionNumber}
+            onChange={(e) => setEditionNumber(e.target.value)}
+            placeholder="Edition e.g. 3/20"
+            style={{ width: '100%', padding: '4px 6px', border: '1px solid var(--line)', fontSize: 12, textAlign: 'right' }}
+          />
+        ) : (
+          ownership.edition_number || 'Unique'
+        )}
+      </div>
+
+      <div style={{ width: editing ? 150 : 120, textAlign: 'right', flexShrink: 0, fontSize: 12, color: 'var(--ink-soft)' }}>
+        {editing ? (
+          <input
+            type="date"
+            value={acquiredAt}
+            onChange={(e) => setAcquiredAt(e.target.value)}
+            style={{ width: '100%', padding: '4px 6px', border: '1px solid var(--line)', fontSize: 12 }}
+          />
+        ) : (
+          `since ${new Date(ownership.acquired_at).toLocaleDateString('en-GB')}`
+        )}
       </div>
 
       <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
