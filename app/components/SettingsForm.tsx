@@ -68,7 +68,10 @@ export default function SettingsForm({
       <div className="toggle-row">
         <div>
           <div className="toggle-row-label">Contact me by phone</div>
-          <div className="toggle-row-hint">Allow the GLOD team to call you regarding artwork inquiries.</div>
+          <div className="toggle-row-hint">
+            Allow the GLOD team to call you regarding artwork inquiries, or if a piece you own is
+            requested on loan for a specific exhibition.
+          </div>
         </div>
         <label className="switch">
           <input

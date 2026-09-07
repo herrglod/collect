@@ -18,8 +18,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid contact.' }, { status: 400 });
   }
 
-  const contact = await queryOne<{ id: number; name: string; email: string | null }>(
-    `SELECT id, name, email FROM public.contacts WHERE id = $1`,
+  const contact = await queryOne<{ id: number; name: string; email: string | null; type: string | null }>(
+    `SELECT id, name, email, type FROM public.contacts WHERE id = $1`,
     [contactId]
   );
   if (!contact) {
@@ -49,12 +49,13 @@ export async function POST(req: NextRequest) {
 
   const tempPassword = generateTempPassword();
   const passwordHash = await hashPassword(tempPassword);
+  const role = contact.type === 'gallery' ? 'gallery_partner' : 'collector';
 
   await queryOne(
     `INSERT INTO public.platform_users (contact_id, email, password_hash, role)
-     VALUES ($1, $2, $3, 'collector')
+     VALUES ($1, $2, $3, $4)
      RETURNING id`,
-    [contactId, loginEmail, passwordHash]
+    [contactId, loginEmail, passwordHash, role]
   );
 
   return NextResponse.json({ ok: true, email: loginEmail, tempPassword });

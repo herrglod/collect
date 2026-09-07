@@ -15,16 +15,22 @@ export async function POST(req: NextRequest) {
   const imageUrl =
     typeof body?.image_url === 'string' && body.image_url.trim().length > 0 ? body.image_url.trim() : null;
   const postedAt = typeof body?.posted_at === 'string' && body.posted_at ? body.posted_at : null;
+  const category =
+    typeof body?.category === 'string' && body.category.trim().length > 0 ? body.category.trim() : null;
+  const sourceUrl =
+    typeof body?.source_url === 'string' && body.source_url.trim().length > 0 ? body.source_url.trim() : null;
+  const visibleCollectors = body?.visible_collectors !== false;
+  const visiblePartners = body?.visible_partners === true;
 
   if (!content) {
     return NextResponse.json({ error: 'Text is required.' }, { status: 400 });
   }
 
   await queryOne(
-    `INSERT INTO public.news_posts (title, content, image_url, posted_at)
-     VALUES ($1, $2, $3, COALESCE($4::date, now()))
+    `INSERT INTO public.news_posts (title, content, image_url, posted_at, category, source_url, visible_collectors, visible_partners)
+     VALUES ($1, $2, $3, COALESCE($4::date, now()), $5, $6, $7, $8)
      RETURNING id`,
-    [title, content, imageUrl, postedAt]
+    [title, content, imageUrl, postedAt, category, sourceUrl, visibleCollectors, visiblePartners]
   );
 
   // Fire-and-forget: notify collectors who opted into news emails.

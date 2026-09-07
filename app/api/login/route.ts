@@ -8,7 +8,7 @@ type PlatformUser = {
   contact_id: number | null;
   email: string;
   password_hash: string;
-  role: 'admin' | 'collector';
+  role: 'admin' | 'collector' | 'gallery_partner';
 };
 
 export async function POST(req: NextRequest) {

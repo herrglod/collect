@@ -6,8 +6,9 @@ export async function middleware(req: NextRequest) {
 
   const isAdminRoute = pathname.startsWith('/admin');
   const isCollectorRoute = pathname.startsWith('/collector');
+  const isPartnerRoute = pathname.startsWith('/partner');
 
-  if (!isAdminRoute && !isCollectorRoute) {
+  if (!isAdminRoute && !isCollectorRoute && !isPartnerRoute) {
     return NextResponse.next();
   }
 
@@ -20,13 +21,25 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
+  function homeFor(role: string) {
+    if (role === 'admin') return '/admin';
+    if (role === 'gallery_partner') return '/partner';
+    return '/collector';
+  }
+
   if (isAdminRoute && session.role !== 'admin') {
-    return NextResponse.redirect(new URL('/collector', req.url));
+    return NextResponse.redirect(new URL(homeFor(session.role), req.url));
+  }
+  if (isCollectorRoute && session.role !== 'collector' && session.role !== 'admin') {
+    return NextResponse.redirect(new URL(homeFor(session.role), req.url));
+  }
+  if (isPartnerRoute && session.role !== 'gallery_partner' && session.role !== 'admin') {
+    return NextResponse.redirect(new URL(homeFor(session.role), req.url));
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ['/admin/:path*', '/collector/:path*'],
+  matcher: ['/admin/:path*', '/collector/:path*', '/partner/:path*'],
 };

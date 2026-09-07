@@ -1,8 +1,7 @@
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { getServerSession, getSessionDisplayName } from '../../../lib/auth-server';
+import { getServerSession } from '../../../lib/auth-server';
 import { query } from '../../../lib/db';
-import UserMenu from '../../components/UserMenu';
 
 type NewsPost = {
   id: number;
@@ -10,6 +9,8 @@ type NewsPost = {
   content: string;
   image_url: string | null;
   posted_at: string;
+  category: string | null;
+  source_url: string | null;
 };
 
 export default async function NewsPage() {
@@ -17,28 +18,14 @@ export default async function NewsPage() {
   if (!session) redirect('/login');
 
   const posts = await query<NewsPost>(
-    `SELECT id, title, content, image_url, posted_at FROM public.news_posts ORDER BY posted_at DESC, id DESC`
+    `SELECT id, title, content, image_url, posted_at, category, source_url
+     FROM public.news_posts
+     WHERE visible_collectors = true
+     ORDER BY posted_at DESC, id DESC`
   );
 
-  const displayName = await getSessionDisplayName(session);
-
   return (
-    <div className="page">
-      <header className="masthead">
-        <div className="masthead-left">
-          <Link href="/collector" className="brand">
-            GLOD <span>Collection</span>
-          </Link>
-          <nav className="primary-nav">
-            <Link href="/collector">My Artworks</Link>
-            <Link href="/collector/news">News</Link>
-            <Link href="/collector/exclusive">Exclusive</Link>
-            <Link href="/collector/events">Events</Link>
-          </nav>
-        </div>
-        <UserMenu name={displayName} />
-      </header>
-
+    <>
       <Link href="/collector" className="back-link">
         ← Back to My Artworks
       </Link>
@@ -63,6 +50,7 @@ export default async function NewsPage() {
                     month: 'long',
                     day: 'numeric',
                   })}
+                  {p.category ? ` · ${p.category}` : ''}
                 </div>
                 {p.title && (
                   <h3 className="card-title" style={{ marginBottom: 8 }}>
@@ -70,11 +58,16 @@ export default async function NewsPage() {
                   </h3>
                 )}
                 <div className="news-content">{p.content}</div>
+                {p.source_url && (
+                  <a href={p.source_url} target="_blank" rel="noreferrer" className="news-source-link">
+                    Read More ↗
+                  </a>
+                )}
               </div>
             </div>
           ))}
         </div>
       )}
-    </div>
+    </>
   );
 }

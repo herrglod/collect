@@ -1,8 +1,7 @@
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { getServerSession, getSessionDisplayName } from '../../../lib/auth-server';
+import { getServerSession } from '../../../lib/auth-server';
 import { query } from '../../../lib/db';
-import UserMenu from '../../components/UserMenu';
 import ArtworkSaveButton from '../../components/ArtworkSaveButton';
 
 type ForSaleArtwork = {
@@ -28,8 +27,6 @@ export default async function ExclusivePage() {
      ORDER BY updated_at DESC`
   );
 
-  const displayName = await getSessionDisplayName(session);
-
   const savedSet = new Set<string>();
   if (session.contactId) {
     const savedRows = await query<{ archive_number: string }>(
@@ -40,22 +37,7 @@ export default async function ExclusivePage() {
   }
 
   return (
-    <div className="page">
-      <header className="masthead">
-        <div className="masthead-left">
-          <Link href="/collector" className="brand">
-            GLOD <span>Collection</span>
-          </Link>
-          <nav className="primary-nav">
-            <Link href="/collector">My Artworks</Link>
-            <Link href="/collector/news">News</Link>
-            <Link href="/collector/exclusive">Exclusive</Link>
-            <Link href="/collector/events">Events</Link>
-          </nav>
-        </div>
-        <UserMenu name={displayName} />
-      </header>
-
+    <>
       <Link href="/collector" className="back-link">
         ← Back to My Artworks
       </Link>
@@ -148,6 +130,6 @@ export default async function ExclusivePage() {
           ))}
         </div>
       )}
-    </div>
+    </>
   );
 }

@@ -6,10 +6,14 @@ type ActiveKey =
   | 'available'
   | 'artworks'
   | 'warehouses'
+  | 'gallery'
   | 'events'
   | 'requests'
   | 'inquiries'
+  | 'certificates'
+  | 'returns'
   | 'news'
+  | 'artist-media'
   | 'accounts';
 
 function Badge({ count }: { count: number }) {
@@ -18,17 +22,26 @@ function Badge({ count }: { count: number }) {
 }
 
 export default async function AdminNav({ active }: { active: ActiveKey }) {
-  const counts = await queryOne<{ pending_requests: number; pending_inquiries: number }>(
+  const counts = await queryOne<{
+    pending_requests: number;
+    pending_inquiries: number;
+    pending_certificates: number;
+    pending_returns: number;
+  }>(
     `SELECT
        (SELECT count(*)::int FROM public.connect_requests WHERE status = 'pending') AS pending_requests,
-       (SELECT count(*)::int FROM public.purchase_inquiries WHERE status = 'pending') AS pending_inquiries`
+       (SELECT count(*)::int FROM public.purchase_inquiries WHERE status = 'pending') AS pending_inquiries,
+       (SELECT count(*)::int FROM public.certificate_requests WHERE status = 'pending') AS pending_certificates,
+       (SELECT count(*)::int FROM public.ownerships WHERE status = 'retour_requested' AND transferred_at IS NULL) AS pending_returns`
   );
   const pendingRequests = counts?.pending_requests ?? 0;
   const pendingInquiries = counts?.pending_inquiries ?? 0;
-  const pendingTotal = pendingRequests + pendingInquiries;
+  const pendingCertificates = counts?.pending_certificates ?? 0;
+  const pendingReturns = counts?.pending_returns ?? 0;
+  const pendingTotal = pendingRequests + pendingInquiries + pendingCertificates + pendingReturns;
 
-  const artworksActive = active === 'available' || active === 'artworks' || active === 'warehouses';
-  const requestActive = active === 'requests' || active === 'inquiries';
+  const artworksActive = active === 'available' || active === 'artworks' || active === 'warehouses' || active === 'gallery';
+  const requestActive = active === 'requests' || active === 'inquiries' || active === 'certificates' || active === 'returns';
 
   return (
     <nav className="admin-subnav">
@@ -47,6 +60,9 @@ export default async function AdminNav({ active }: { active: ActiveKey }) {
           </Link>
           <Link href="/admin/warehouses" className={active === 'warehouses' ? 'active' : ''}>
             Warehouse
+          </Link>
+          <Link href="/admin/gallery" className={active === 'gallery' ? 'active' : ''}>
+            Gallery Partner
           </Link>
         </div>
       </div>
@@ -69,11 +85,22 @@ export default async function AdminNav({ active }: { active: ActiveKey }) {
             Purchase
             <Badge count={pendingInquiries} />
           </Link>
+          <Link href="/admin/certificates" className={active === 'certificates' ? 'active' : ''}>
+            Certificates
+            <Badge count={pendingCertificates} />
+          </Link>
+          <Link href="/admin/returns" className={active === 'returns' ? 'active' : ''}>
+            Returns
+            <Badge count={pendingReturns} />
+          </Link>
         </div>
       </div>
 
       <Link href="/admin/news" className={active === 'news' ? 'active' : ''}>
         News
+      </Link>
+      <Link href="/admin/artist-media" className={active === 'artist-media' ? 'active' : ''}>
+        Artist Media
       </Link>
       <Link href="/admin/accounts" className={active === 'accounts' ? 'active' : ''}>
         Access

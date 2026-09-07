@@ -14,6 +14,12 @@ export async function requireAdminSession(): Promise<SessionPayload | null> {
   return session;
 }
 
+export async function requirePartnerSession(): Promise<SessionPayload | null> {
+  const session = await getServerSession();
+  if (!session || (session.role !== 'gallery_partner' && session.role !== 'admin')) return null;
+  return session;
+}
+
 export async function getSessionDisplayName(session: SessionPayload): Promise<string> {
   if (session.contactId) {
     const contact = await queryOne<{ name: string }>(

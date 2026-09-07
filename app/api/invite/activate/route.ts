@@ -23,8 +23,9 @@ export async function POST(req: NextRequest) {
     expires_at: string;
     accepted_at: string | null;
     contact_name: string;
+    contact_type: string | null;
   }>(
-    `SELECT i.id, i.contact_id, i.expires_at, i.accepted_at, c.name AS contact_name
+    `SELECT i.id, i.contact_id, i.expires_at, i.accepted_at, c.name AS contact_name, c.type AS contact_type
      FROM public.collector_invites i
      JOIN public.contacts c ON c.id = i.contact_id
      WHERE i.token = $1`,
@@ -57,12 +58,13 @@ export async function POST(req: NextRequest) {
   }
 
   const passwordHash = await hashPassword(password);
+  const role = invite.contact_type === 'gallery' ? 'gallery_partner' : 'collector';
 
   const user = await queryOne<{ id: number }>(
     `INSERT INTO public.platform_users (contact_id, email, password_hash, role)
-     VALUES ($1, $2, $3, 'collector')
+     VALUES ($1, $2, $3, $4)
      RETURNING id`,
-    [invite.contact_id, email, passwordHash]
+    [invite.contact_id, email, passwordHash, role]
   );
 
   await queryOne(`UPDATE public.collector_invites SET accepted_at = now(), email = $2 WHERE id = $1`, [
@@ -86,7 +88,7 @@ export async function POST(req: NextRequest) {
   const sessionToken = await signSession({
     userId: user!.id,
     email,
-    role: 'collector',
+    role,
     contactId: invite.contact_id,
   });
 

@@ -1,8 +1,8 @@
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { getServerSession, getSessionDisplayName } from '../../lib/auth-server';
+import { getServerSession } from '../../lib/auth-server';
 import { query } from '../../lib/db';
-import UserMenu from '../components/UserMenu';
+import ArtworkStatusControl from '../components/ArtworkStatusControl';
 
 type OwnedArtwork = {
   ownership_id: number;
@@ -20,6 +20,7 @@ type OwnedArtwork = {
   slug: string | null;
   category: string;
   edition_type: string;
+  status: string;
 };
 
 type Exhibition = {
@@ -42,24 +43,25 @@ export default async function CollectorPage() {
   }
   if (!session.contactId) {
     return (
-      <div className="page">
-        <div className="empty-state">
-          This account is not linked to a contact record. Please reach out to the GLOD team.
-        </div>
+      <div className="empty-state">
+        This account is not linked to a contact record. Please reach out to the GLOD team.
       </div>
     );
   }
 
-  const artworks = await query<OwnedArtwork>(
+  const allOwned = await query<OwnedArtwork>(
     `SELECT o.id AS ownership_id, o.archive_number, o.edition_number, o.acquired_at,
             a.name, a.year, a.medium, a.size, a.rarity, a.description,
-            a.featured_image_url, a.webflow_item_id, a.slug, a.category, a.edition_type
+            a.featured_image_url, a.webflow_item_id, a.slug, a.category, a.edition_type, o.status
      FROM public.ownerships o
      JOIN public.artworks a ON a.archive_number = o.archive_number
      WHERE o.contact_id = $1 AND o.transferred_at IS NULL
      ORDER BY o.acquired_at DESC`,
     [session.contactId]
   );
+
+  const artworks = allOwned.filter((a) => a.status !== 'sold');
+  const soldArtworks = allOwned.filter((a) => a.status === 'sold');
 
   const uniqueCount = artworks.filter((a) => a.category === 'artwork' && a.edition_type === 'unique').length;
   const limitedCount = artworks.filter(
@@ -91,25 +93,9 @@ export default async function CollectorPage() {
   );
 
   const generalExhibitions = otherExhibitions.filter((e) => !relatedIds.has(e.id)).slice(0, 6);
-  const displayName = await getSessionDisplayName(session);
 
   return (
-    <div className="page">
-      <header className="masthead">
-        <div className="masthead-left">
-          <Link href="/collector" className="brand">
-            GLOD <span>Collection</span>
-          </Link>
-          <nav className="primary-nav">
-            <Link href="/collector">My Artworks</Link>
-            <Link href="/collector/news">News</Link>
-            <Link href="/collector/exclusive">Exclusive</Link>
-            <Link href="/collector/events">Events</Link>
-          </nav>
-        </div>
-        <UserMenu name={displayName} />
-      </header>
-
+    <>
       <div className="collection-header">
         <div className="collection-header-text">
           <div className="eyebrow">Collector Area</div>
@@ -173,6 +159,7 @@ export default async function CollectorPage() {
                 {art.edition_number && (
                   <div className="badge">Edition Number: {art.edition_number}</div>
                 )}
+                <ArtworkStatusControl ownershipId={art.ownership_id} status={art.status} />
                 {art.slug && (
                   <div className="card-footer">
                     <a
@@ -189,6 +176,30 @@ export default async function CollectorPage() {
             </div>
           ))}
         </div>
+      )}
+
+      {soldArtworks.length > 0 && (
+        <>
+          <h2 className="section-title">Sold</h2>
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Archive No.</th>
+                <th>Artwork</th>
+                <th>Edition</th>
+              </tr>
+            </thead>
+            <tbody>
+              {soldArtworks.map((a) => (
+                <tr key={a.ownership_id}>
+                  <td>{a.archive_number}</td>
+                  <td>{a.name}</td>
+                  <td>{a.edition_number || 'Unique'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </>
       )}
 
       {relatedExhibitions.length > 0 && (
@@ -262,6 +273,6 @@ export default async function CollectorPage() {
           </div>
         </>
       )}
-    </div>
+    </>
   );
 }

@@ -9,7 +9,13 @@ type NewsPost = {
   content: string;
   image_url: string | null;
   posted_at: string;
+  category: string | null;
+  source_url: string | null;
+  visible_collectors: boolean;
+  visible_partners: boolean;
 };
+
+const CATEGORIES = ['Press', 'Artist', 'Project', 'Exhibition', 'Streetart', 'Collaboration'];
 
 function toDateInputValue(value: string | Date): string {
   const d = new Date(value);
@@ -27,6 +33,10 @@ export default function NewsPostRow({ post }: { post: NewsPost }) {
   const [content, setContent] = useState(post.content);
   const [imageUrl, setImageUrl] = useState(post.image_url || '');
   const [postedAt, setPostedAt] = useState(toDateInputValue(post.posted_at));
+  const [category, setCategory] = useState(post.category || '');
+  const [sourceUrl, setSourceUrl] = useState(post.source_url || '');
+  const [visibleCollectors, setVisibleCollectors] = useState(post.visible_collectors ?? true);
+  const [visiblePartners, setVisiblePartners] = useState(post.visible_partners ?? false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -43,6 +53,10 @@ export default function NewsPostRow({ post }: { post: NewsPost }) {
           content: content.trim(),
           image_url: imageUrl.trim() || null,
           posted_at: postedAt,
+          category: category || null,
+          source_url: sourceUrl.trim() || null,
+          visible_collectors: visibleCollectors,
+          visible_partners: visiblePartners,
         }),
       });
       if (!res.ok) {
@@ -97,6 +111,34 @@ export default function NewsPostRow({ post }: { post: NewsPost }) {
           <label>Post Date</label>
           <input type="date" value={postedAt} onChange={(e) => setPostedAt(e.target.value)} />
         </div>
+        <div className="field">
+          <label>Category</label>
+          <select value={category} onChange={(e) => setCategory(e.target.value)}>
+            <option value="">— None —</option>
+            {CATEGORIES.map((c) => (
+              <option key={c} value={c}>
+                {c}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="field">
+          <label>Source / Reference Link</label>
+          <input value={sourceUrl} onChange={(e) => setSourceUrl(e.target.value)} placeholder="https://…" />
+        </div>
+        <div className="field">
+          <label>Visible to</label>
+          <div style={{ display: 'flex', gap: 20, fontSize: 13 }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <input type="checkbox" checked={visibleCollectors} onChange={(e) => setVisibleCollectors(e.target.checked)} />
+              Collectors
+            </label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <input type="checkbox" checked={visiblePartners} onChange={(e) => setVisiblePartners(e.target.checked)} />
+              Gallery Partners
+            </label>
+          </div>
+        </div>
         <div style={{ display: 'flex', gap: 8 }}>
           <button onClick={handleSave} disabled={loading} className="btn">
             {loading ? 'Saving…' : 'Save'}
@@ -134,11 +176,17 @@ export default function NewsPostRow({ post }: { post: NewsPost }) {
       <div>
         <div style={{ fontSize: 11, color: 'var(--ink-soft)', marginBottom: 6 }}>
           {new Date(post.posted_at).toLocaleDateString('en-GB')}
+          {post.category ? ` · ${post.category}` : ''}
+          {' · '}
+          {[post.visible_collectors && 'Collectors', post.visible_partners && 'Partners'].filter(Boolean).join(' + ') || 'Hidden'}
         </div>
         {post.title && <div style={{ fontWeight: 700, marginBottom: 4 }}>{post.title}</div>}
         <div style={{ fontSize: 14, whiteSpace: 'pre-wrap' }}>{post.content}</div>
         {post.image_url && (
           <div style={{ fontSize: 12, color: 'var(--ink-soft)', marginTop: 6 }}>{post.image_url}</div>
+        )}
+        {post.source_url && (
+          <div style={{ fontSize: 12, color: 'var(--ink-soft)', marginTop: 2 }}>Source: {post.source_url}</div>
         )}
       </div>
       <div style={{ display: 'flex', gap: 8, height: 'fit-content', flexShrink: 0 }}>

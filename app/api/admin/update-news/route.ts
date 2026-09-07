@@ -15,6 +15,12 @@ export async function POST(req: NextRequest) {
   const imageUrl =
     typeof body?.image_url === 'string' && body.image_url.trim().length > 0 ? body.image_url.trim() : null;
   const postedAt = typeof body?.posted_at === 'string' && body.posted_at ? body.posted_at : null;
+  const category =
+    typeof body?.category === 'string' && body.category.trim().length > 0 ? body.category.trim() : null;
+  const sourceUrl =
+    typeof body?.source_url === 'string' && body.source_url.trim().length > 0 ? body.source_url.trim() : null;
+  const visibleCollectors = body?.visible_collectors !== false;
+  const visiblePartners = body?.visible_partners === true;
 
   if (!postId || !content) {
     return NextResponse.json({ error: 'post_id and text are required.' }, { status: 400 });
@@ -22,10 +28,11 @@ export async function POST(req: NextRequest) {
 
   const row = await queryOne(
     `UPDATE public.news_posts
-     SET title = $2, content = $3, image_url = $4, posted_at = COALESCE($5::date, posted_at)
+     SET title = $2, content = $3, image_url = $4, posted_at = COALESCE($5::date, posted_at),
+         category = $6, source_url = $7, visible_collectors = $8, visible_partners = $9
      WHERE id = $1
      RETURNING id`,
-    [postId, title, content, imageUrl, postedAt]
+    [postId, title, content, imageUrl, postedAt, category, sourceUrl, visibleCollectors, visiblePartners]
   );
 
   if (!row) {

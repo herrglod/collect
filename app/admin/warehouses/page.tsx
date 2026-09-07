@@ -5,12 +5,20 @@ import { query } from '../../../lib/db';
 import UserMenu from '../../components/UserMenu';
 import AdminNav from '../../components/AdminNav';
 import WarehouseForm from '../../components/WarehouseForm';
+import WarehouseTable from '../../components/WarehouseTable';
 
 type Warehouse = {
   id: number;
   name: string;
   location: string | null;
   artwork_count: number;
+};
+
+type WarehouseArtworkRow = {
+  warehouse_id: number;
+  archive_number: string;
+  name: string;
+  featured_image_url: string | null;
 };
 
 export default async function AdminWarehousesPage() {
@@ -25,6 +33,18 @@ export default async function AdminWarehousesPage() {
      GROUP BY w.id
      ORDER BY w.name ASC`
   );
+
+  const artworkRows = await query<WarehouseArtworkRow>(
+    `SELECT a.warehouse_id, a.archive_number, a.name, a.featured_image_url
+     FROM public.artworks a
+     WHERE a.warehouse_id IS NOT NULL
+     ORDER BY a.name ASC`
+  );
+
+  const warehousesWithArtworks = warehouses.map((w) => ({
+    ...w,
+    artworks: artworkRows.filter((a) => a.warehouse_id === w.id),
+  }));
 
   const [{ count: unstoredCount }] = await query<{ count: string }>(
     `SELECT count(*)::text AS count
@@ -61,28 +81,7 @@ export default async function AdminWarehousesPage() {
 
       <WarehouseForm />
 
-      {warehouses.length === 0 ? (
-        <div className="empty-state">No warehouses yet. Create your first one above.</div>
-      ) : (
-        <table className="data-table">
-          <thead>
-            <tr>
-              <th>Warehouse</th>
-              <th>Location</th>
-              <th>Artworks Stored</th>
-            </tr>
-          </thead>
-          <tbody>
-            {warehouses.map((w) => (
-              <tr key={w.id}>
-                <td>{w.name}</td>
-                <td>{w.location ?? '—'}</td>
-                <td>{w.artwork_count}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+      <WarehouseTable warehouses={warehousesWithArtworks} />
 
       <p style={{ fontSize: 12, color: 'var(--ink-soft)', marginTop: 24 }}>
         {unstoredCount} unsold artwork{unstoredCount === '1' ? '' : 's'} currently have no warehouse assigned.

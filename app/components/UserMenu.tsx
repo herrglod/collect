@@ -11,7 +11,21 @@ function getInitials(name: string): string {
   return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
 }
 
-export default function UserMenu({ name }: { name: string }) {
+const DEFAULT_LINKS = [
+  { href: '/collector/account', label: 'Account' },
+  { href: '/collector/connect-art', label: 'Connect Art' },
+  { href: '/collector/requests', label: 'My Requests' },
+  { href: '/collector/settings', label: 'Settings' },
+  { href: '/collector/certificates', label: 'Certificates' },
+];
+
+export default function UserMenu({
+  name,
+  links = DEFAULT_LINKS,
+}: {
+  name: string;
+  links?: { href: string; label: string }[];
+}) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -41,18 +55,11 @@ export default function UserMenu({ name }: { name: string }) {
       </button>
       {open && (
         <div className="user-menu-dropdown">
-          <Link href="/collector/account" className="user-menu-item" onClick={() => setOpen(false)}>
-            Account
-          </Link>
-          <Link href="/collector/connect-art" className="user-menu-item" onClick={() => setOpen(false)}>
-            Connect Art
-          </Link>
-          <Link href="/collector/requests" className="user-menu-item" onClick={() => setOpen(false)}>
-            My Requests
-          </Link>
-          <Link href="/collector/settings" className="user-menu-item" onClick={() => setOpen(false)}>
-            Settings
-          </Link>
+          {links.map((link) => (
+            <Link key={link.href} href={link.href} className="user-menu-item" onClick={() => setOpen(false)}>
+              {link.label}
+            </Link>
+          ))}
           <button className="user-menu-item" type="button" onClick={handleLogout}>
             Logout
           </button>

@@ -28,7 +28,8 @@ function LoginForm() {
         return;
       }
       const next = params.get('next');
-      router.push(next || (data.role === 'admin' ? '/admin' : '/collector'));
+      const home = data.role === 'admin' ? '/admin' : data.role === 'gallery_partner' ? '/partner' : '/collector';
+      router.push(next || home);
       router.refresh();
     } catch {
       setError('Unexpected error. Please try again.');

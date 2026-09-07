@@ -13,6 +13,10 @@ type NewsPost = {
   content: string;
   image_url: string | null;
   posted_at: string;
+  category: string | null;
+  source_url: string | null;
+  visible_collectors: boolean;
+  visible_partners: boolean;
 };
 
 export default async function AdminNewsPage() {
@@ -21,7 +25,8 @@ export default async function AdminNewsPage() {
   if (session.role !== 'admin') redirect('/collector');
 
   const posts = await query<NewsPost>(
-    `SELECT id, title, content, image_url, posted_at FROM public.news_posts ORDER BY posted_at DESC, id DESC`
+    `SELECT id, title, content, image_url, posted_at, category, source_url, visible_collectors, visible_partners
+     FROM public.news_posts ORDER BY posted_at DESC, id DESC`
   );
 
   const displayName = await getSessionDisplayName(session);
