@@ -21,6 +21,11 @@ export async function POST(req: NextRequest) {
     typeof body?.source_url === 'string' && body.source_url.trim().length > 0 ? body.source_url.trim() : null;
   const visibleCollectors = body?.visible_collectors !== false;
   const visiblePartners = body?.visible_partners === true;
+  // Emailing is opt-in per post, and off by default — publishing a post (including drafts
+  // while building out the News section) must never silently blast every subscriber.
+  // Each audience is its own checkbox, since a post might only be relevant to one side.
+  const emailCollectors = body?.email_collectors === true;
+  const emailPartners = body?.email_partners === true;
 
   if (!content) {
     return NextResponse.json({ error: 'Text is required.' }, { status: 400 });
@@ -33,18 +38,26 @@ export async function POST(req: NextRequest) {
     [title, content, imageUrl, postedAt, category, sourceUrl, visibleCollectors, visiblePartners]
   );
 
-  // Fire-and-forget: notify collectors who opted into news emails.
-  // Never let an email failure affect the news post response.
-  try {
-    const subscribers = await query<{ email: string }>(
-      `SELECT email FROM public.contacts WHERE pref_news_email = true AND email IS NOT NULL AND email <> ''`
-    );
-    const emails = subscribers.map((s) => s.email);
-    if (emails.length > 0) {
-      await sendNewsNotification({ title, content, image_url: imageUrl }, emails);
+  if (emailCollectors || emailPartners) {
+    // Fire-and-forget: notify contacts who opted into news emails, scoped to whichever
+    // audience checkboxes were ticked. Never let an email failure affect the post response.
+    try {
+      const subscribers = await query<{ email: string }>(
+        `SELECT email FROM public.contacts
+         WHERE pref_news_email = true AND email IS NOT NULL AND email <> ''
+           AND (
+             ($1::boolean AND type IS DISTINCT FROM 'gallery')
+             OR ($2::boolean AND type = 'gallery')
+           )`,
+        [emailCollectors, emailPartners]
+      );
+      const emails = subscribers.map((s) => s.email);
+      if (emails.length > 0) {
+        await sendNewsNotification({ title, content, image_url: imageUrl }, emails);
+      }
+    } catch (err) {
+      console.error('Failed to send news notification emails:', err);
     }
-  } catch (err) {
-    console.error('Failed to send news notification emails:', err);
   }
 
   return NextResponse.json({ ok: true });

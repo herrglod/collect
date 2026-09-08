@@ -143,7 +143,65 @@ function buildWelcomeEmailHtml(name: string): string {
   return emailShell(body);
 }
 
+function buildPasswordResetEmailHtml(resetUrl: string): string {
+  const body = `
+    <h1 style="font-size:24px;font-weight:700;letter-spacing:-0.01em;line-height:1.15;margin:0 0 20px;color:${INK};">
+      Reset your password
+    </h1>
+    <p style="font-size:15px;line-height:1.6;color:${INK};margin:0 0 24px;">
+      We received a request to reset the password for your GLOD Collection account. Click the button
+      below to choose a new password. This link is valid for 1 hour.
+    </p>
+    ${emailButton(resetUrl, 'Reset Password')}
+    <p style="margin-top:32px;font-size:11px;color:${INK_SOFT};">
+      If you didn't request this, you can safely ignore this email — your password will stay unchanged.
+    </p>`;
+
+  return emailShell(body);
+}
+
 type SendResult = { sent: boolean; reason?: string };
+
+/**
+ * Sends a password reset link. Never throws — returns a result object so callers can
+ * decide whether to surface a message (though the API route should stay generic either way,
+ * to avoid revealing whether an email exists).
+ */
+export async function sendPasswordResetEmail(toEmail: string, resetUrl: string): Promise<SendResult> {
+  const apiKey = process.env.RESEND_API_KEY;
+  const fromAddress = process.env.RESEND_FROM_EMAIL;
+
+  if (!apiKey || !fromAddress) {
+    console.warn('RESEND_API_KEY or RESEND_FROM_EMAIL not set — skipping password reset email.');
+    return { sent: false, reason: 'Resend is not configured yet (RESEND_API_KEY / RESEND_FROM_EMAIL are missing in Vercel).' };
+  }
+
+  try {
+    const res = await fetch(RESEND_SINGLE_URL, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: fromAddress,
+        to: [toEmail],
+        subject: 'Reset your GLOD Collection password',
+        html: buildPasswordResetEmailHtml(resetUrl),
+      }),
+    });
+
+    if (!res.ok) {
+      const text = await res.text().catch(() => '');
+      console.error('Resend password reset email failed:', res.status, text);
+      return { sent: false, reason: `Resend error (${res.status}): ${text || 'unknown'}` };
+    }
+    return { sent: true };
+  } catch (err: any) {
+    console.error('Resend password reset email threw an error:', err);
+    return { sent: false, reason: err?.message || 'Unexpected error while sending.' };
+  }
+}
 
 /**
  * Sends the welcome email after a collector activates their invite (or on demand for testing).

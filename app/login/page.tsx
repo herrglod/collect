@@ -2,6 +2,7 @@
 
 import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import Link from 'next/link';
 
 function LoginForm() {
   const router = useRouter();
@@ -73,16 +74,21 @@ function LoginForm() {
               autoComplete="current-password"
             />
           </div>
+          <div style={{ textAlign: 'right', marginTop: -8, marginBottom: 20 }}>
+            <Link href="/forgot-password" style={{ fontSize: 12, color: 'var(--ink-soft)' }}>
+              Forgot password?
+            </Link>
+          </div>
           <button type="submit" className="btn" disabled={loading} style={{ width: '100%' }}>
             {loading ? 'Checking…' : 'Sign In'}
           </button>
         </form>
         <div style={{ marginTop: 20, fontSize: 12, color: 'var(--ink-soft)', textAlign: 'center' }}>
-          Forgot your password? Contact us at{' '}
+          Still stuck? Contact us at{' '}
           <a href="mailto:hello@marcinglod.com" style={{ color: 'var(--ink)' }}>
             hello@marcinglod.com
-          </a>{' '}
-          and we'll reset it for you.
+          </a>
+          .
         </div>
       </div>
     </div>
