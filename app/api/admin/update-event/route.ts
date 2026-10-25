@@ -30,8 +30,8 @@ export async function POST(req: NextRequest) {
   const eventDate = datePrecision === 'month' && /^\d{4}-\d{2}$/.test(rawDate) ? `${rawDate}-01` : rawDate;
 
   const extras = parseEventExtras(body);
-  if (!extras.ok) {
-    return NextResponse.json({ error: extras.error }, { status: 400 });
+  if (extras.error || !extras.value) {
+    return NextResponse.json({ error: extras.error || 'Invalid data.' }, { status: 400 });
   }
   const x = extras.value;
 
