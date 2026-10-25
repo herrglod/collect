@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import EventExtraFields, { EventExtraValues, emptyExtras, extrasPayload } from './EventExtraFields';
 
 function todayISO() {
   return new Date().toISOString().slice(0, 10);
@@ -20,6 +21,7 @@ export default function EventComposer() {
   const [datePrecision, setDatePrecision] = useState<'exact' | 'month'>('exact');
   const [eventDate, setEventDate] = useState(todayISO());
   const [eventMonth, setEventMonth] = useState(currentMonthValue());
+  const [extras, setExtras] = useState<EventExtraValues>(emptyExtras);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -42,6 +44,7 @@ export default function EventComposer() {
           image_url: imageUrl.trim() || null,
           date_precision: datePrecision,
           event_date: datePrecision === 'month' ? eventMonth : eventDate,
+          ...extrasPayload(extras),
         }),
       });
       const data = await res.json().catch(() => ({}));
@@ -57,6 +60,7 @@ export default function EventComposer() {
       setDatePrecision('exact');
       setEventDate(todayISO());
       setEventMonth(currentMonthValue());
+      setExtras(emptyExtras);
       router.refresh();
     } catch {
       setError('Unexpected error.');
@@ -126,6 +130,7 @@ export default function EventComposer() {
             <input type="month" value={eventMonth} onChange={(e) => setEventMonth(e.target.value)} />
           )}
         </div>
+        <EventExtraFields value={extras} onChange={setExtras} />
         <button type="submit" className="btn" disabled={loading} style={{ width: '100%' }}>
           {loading ? 'Publishing…' : 'Publish Event'}
         </button>

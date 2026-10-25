@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import EventExtraFields, { EventExtraValues, extrasPayload } from './EventExtraFields';
 
 type Event = {
   id: number;
@@ -12,6 +13,12 @@ type Event = {
   location: string | null;
   image_url: string | null;
   interest_count: number;
+  archive_no: string | null;
+  time_text: string | null;
+  show_public: boolean;
+  show_collectors: boolean;
+  sold_out: boolean;
+  catalog_url: string | null;
 };
 
 function toDateInputValue(value: string | Date): string {
@@ -46,6 +53,14 @@ export default function EventRow({ event }: { event: Event }) {
   const [datePrecision, setDatePrecision] = useState<'exact' | 'month'>(event.date_precision);
   const [eventDate, setEventDate] = useState(toDateInputValue(event.event_date));
   const [eventMonth, setEventMonth] = useState(toMonthInputValue(event.event_date));
+  const [extras, setExtras] = useState<EventExtraValues>({
+    archiveNo: event.archive_no || '',
+    timeText: event.time_text || '',
+    showPublic: event.show_public,
+    showCollectors: event.show_collectors,
+    soldOut: event.sold_out,
+    catalogUrl: event.catalog_url || '',
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -64,6 +79,7 @@ export default function EventRow({ event }: { event: Event }) {
           image_url: imageUrl.trim() || null,
           date_precision: datePrecision,
           event_date: datePrecision === 'month' ? eventMonth : eventDate,
+          ...extrasPayload(extras),
         }),
       });
       if (!res.ok) {
@@ -148,6 +164,7 @@ export default function EventRow({ event }: { event: Event }) {
             <input type="month" value={eventMonth} onChange={(e) => setEventMonth(e.target.value)} />
           )}
         </div>
+        <EventExtraFields value={extras} onChange={setExtras} />
         <div style={{ display: 'flex', gap: 8 }}>
           <button onClick={handleSave} disabled={loading} className="btn">
             {loading ? 'Saving…' : 'Save'}
@@ -190,6 +207,13 @@ export default function EventRow({ event }: { event: Event }) {
           <strong style={{ color: 'var(--ink)' }}>
             {event.interest_count} interested
           </strong>
+        </div>
+        <div style={{ fontSize: 11, color: 'var(--ink-soft)', marginBottom: 6 }}>
+          {event.archive_no ? <strong style={{ color: 'var(--ink)' }}>{event.archive_no}</strong> : 'no archive number'}
+          {event.time_text ? ` · ${event.time_text}` : ''}
+          {event.show_collectors ? ' · Collectors' : ''}
+          {event.show_public ? ' · Public (glod.art)' : ''}
+          {event.sold_out ? ' · SOLD OUT' : ''}
         </div>
         <div style={{ fontWeight: 700, marginBottom: 4 }}>{event.title}</div>
         {event.description && <div style={{ fontSize: 14, whiteSpace: 'pre-wrap' }}>{event.description}</div>}

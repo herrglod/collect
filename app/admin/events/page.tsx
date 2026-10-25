@@ -16,6 +16,12 @@ type Event = {
   location: string | null;
   image_url: string | null;
   interest_count: number;
+  archive_no: string | null;
+  time_text: string | null;
+  show_public: boolean;
+  show_collectors: boolean;
+  sold_out: boolean;
+  catalog_url: string | null;
 };
 
 export default async function AdminEventsPage() {
@@ -25,6 +31,7 @@ export default async function AdminEventsPage() {
 
   const events = await query<Event>(
     `SELECT e.id, e.title, e.description, e.event_date, e.date_precision, e.location, e.image_url,
+            e.archive_no, e.time_text, e.show_public, e.show_collectors, e.sold_out, e.catalog_url,
             COUNT(ei.id)::int AS interest_count
      FROM public.events e
      LEFT JOIN public.event_interests ei ON ei.event_id = e.id

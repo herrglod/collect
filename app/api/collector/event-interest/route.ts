@@ -27,6 +27,14 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true, interested: false });
   }
 
+  const ev = await queryOne<{ sold_out: boolean }>(`SELECT sold_out FROM public.events WHERE id = $1`, [eventId]);
+  if (!ev) {
+    return NextResponse.json({ error: 'Event not found.' }, { status: 404 });
+  }
+  if (ev.sold_out) {
+    return NextResponse.json({ error: 'This event is sold out.' }, { status: 409 });
+  }
+
   await queryOne(
     `INSERT INTO public.event_interests (event_id, contact_id) VALUES ($1, $2)
      ON CONFLICT (event_id, contact_id) DO NOTHING`,

@@ -12,6 +12,8 @@ type Event = {
   date_precision: 'exact' | 'month';
   location: string | null;
   image_url: string | null;
+  sold_out: boolean;
+  catalog_url: string | null;
 };
 
 function getDateParts(value: string | Date, precision: 'exact' | 'month') {
@@ -64,9 +66,22 @@ function EventList({ events, interestedIds }: { events: Event[]; interestedIds: 
                 </div>
               )}
               {ev.description && <div className="event-row-description">{ev.description}</div>}
+              {ev.catalog_url && (
+                <div className="event-row-description">
+                  <a href={ev.catalog_url} target="_blank" rel="noopener noreferrer">
+                    Open catalogue (PDF)
+                  </a>
+                </div>
+              )}
             </div>
 
-            <EventInterestButton eventId={ev.id} initialInterested={interestedIds.has(ev.id)} />
+            {ev.sold_out ? (
+              <div className="event-row-description" style={{ whiteSpace: 'nowrap', fontWeight: 700 }}>
+                Sold out
+              </div>
+            ) : (
+              <EventInterestButton eventId={ev.id} initialInterested={interestedIds.has(ev.id)} />
+            )}
           </div>
         );
       })}
@@ -79,16 +94,16 @@ export default async function CollectorEventsPage() {
   if (!session) redirect('/login');
 
   const upcoming = await query<Event>(
-    `SELECT id, title, description, event_date, date_precision, location, image_url
+    `SELECT id, title, description, event_date, date_precision, location, image_url, sold_out, catalog_url
      FROM public.events
-     WHERE event_date >= CURRENT_DATE
+     WHERE show_collectors = true AND event_date >= CURRENT_DATE
      ORDER BY event_date ASC`
   );
 
   const past = await query<Event>(
-    `SELECT id, title, description, event_date, date_precision, location, image_url
+    `SELECT id, title, description, event_date, date_precision, location, image_url, sold_out, catalog_url
      FROM public.events
-     WHERE event_date < CURRENT_DATE
+     WHERE show_collectors = true AND event_date < CURRENT_DATE
      ORDER BY event_date DESC
      LIMIT 6`
   );

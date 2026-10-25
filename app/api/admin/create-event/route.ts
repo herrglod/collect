@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAdminSession } from '../../../../lib/auth-server';
 import { queryOne } from '../../../../lib/db';
+import { parseEventExtras, isUniqueViolation } from '../../../../lib/events';
 
 export async function POST(req: NextRequest) {
   const session = await requireAdminSession();
@@ -28,12 +29,27 @@ export async function POST(req: NextRequest) {
   // Month inputs arrive as "YYYY-MM"; normalize to the 1st of that month for storage.
   const eventDate = datePrecision === 'month' && /^\d{4}-\d{2}$/.test(rawDate) ? `${rawDate}-01` : rawDate;
 
-  await queryOne(
-    `INSERT INTO public.events (title, description, event_date, date_precision, location, image_url)
-     VALUES ($1, $2, $3::date, $4, $5, $6)
-     RETURNING id`,
-    [title, description, eventDate, datePrecision, location, imageUrl]
-  );
+  const extras = parseEventExtras(body);
+  if (!extras.ok) {
+    return NextResponse.json({ error: extras.error }, { status: 400 });
+  }
+  const x = extras.value;
+
+  try {
+    await queryOne(
+      `INSERT INTO public.events (title, description, event_date, date_precision, location, image_url,
+                                  archive_no, time_text, show_public, show_collectors, sold_out, catalog_url)
+       VALUES ($1, $2, $3::date, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+       RETURNING id`,
+      [title, description, eventDate, datePrecision, location, imageUrl,
+        x.archiveNo, x.timeText, x.showPublic, x.showCollectors, x.soldOut, x.catalogUrl]
+    );
+  } catch (err) {
+    if (isUniqueViolation(err)) {
+      return NextResponse.json({ error: 'This archive number is already used by another event.' }, { status: 400 });
+    }
+    throw err;
+  }
 
   return NextResponse.json({ ok: true });
 }
