@@ -29,7 +29,17 @@ export function extrasPayload(v: EventExtraValues) {
   };
 }
 
-const checkRow = { display: 'flex', alignItems: 'center', gap: 8, fontWeight: 400, fontSize: 13, marginBottom: 8 } as const;
+const checkRow = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: 10,
+  fontWeight: 400,
+  fontSize: 13,
+  marginBottom: 8,
+  textTransform: 'none',
+  letterSpacing: 0,
+} as const;
+const box = { width: 'auto', flex: 'none', margin: 0 } as const;
 
 export default function EventExtraFields({
   value,
@@ -69,15 +79,15 @@ export default function EventExtraFields({
       <div className="field">
         <label>Visibility</label>
         <label style={checkRow}>
-          <input type="checkbox" checked={value.showCollectors} onChange={(e) => set({ showCollectors: e.target.checked })} />
+          <input type="checkbox" style={box} checked={value.showCollectors} onChange={(e) => set({ showCollectors: e.target.checked })} />
           Show to collectors (collect.glod.art)
         </label>
         <label style={checkRow}>
-          <input type="checkbox" checked={value.showPublic} onChange={(e) => set({ showPublic: e.target.checked })} />
+          <input type="checkbox" style={box} checked={value.showPublic} onChange={(e) => set({ showPublic: e.target.checked })} />
           Show publicly on glod.art (needs archive number)
         </label>
         <label style={checkRow}>
-          <input type="checkbox" checked={value.soldOut} onChange={(e) => set({ soldOut: e.target.checked })} />
+          <input type="checkbox" style={box} checked={value.soldOut} onChange={(e) => set({ soldOut: e.target.checked })} />
           Event sold out (registration closed)
         </label>
       </div>

@@ -141,17 +141,19 @@ export default function EventRow({ event }: { event: Event }) {
         <div className="field">
           <label>Date</label>
           <div style={{ display: 'flex', gap: 16, marginBottom: 8, fontSize: 13 }}>
-            <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontWeight: 400 }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 10, fontWeight: 400, textTransform: 'none', letterSpacing: 0 }}>
               <input
                 type="radio"
+                style={{ width: 'auto', flex: 'none', margin: 0 }}
                 checked={datePrecision === 'exact'}
                 onChange={() => setDatePrecision('exact')}
               />
               Exact date
             </label>
-            <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontWeight: 400 }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 10, fontWeight: 400, textTransform: 'none', letterSpacing: 0 }}>
               <input
                 type="radio"
+                style={{ width: 'auto', flex: 'none', margin: 0 }}
                 checked={datePrecision === 'month'}
                 onChange={() => setDatePrecision('month')}
               />
