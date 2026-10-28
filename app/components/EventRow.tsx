@@ -14,6 +14,7 @@ type Event = {
   image_url: string | null;
   interest_count: number;
   archive_no: string | null;
+  address: string | null;
   time_text: string | null;
   show_public: boolean;
   show_collectors: boolean;
@@ -55,6 +56,7 @@ export default function EventRow({ event }: { event: Event }) {
   const [eventMonth, setEventMonth] = useState(toMonthInputValue(event.event_date));
   const [extras, setExtras] = useState<EventExtraValues>({
     archiveNo: event.archive_no || '',
+    address: event.address || '',
     timeText: event.time_text || '',
     showPublic: event.show_public,
     showCollectors: event.show_collectors,
@@ -205,6 +207,7 @@ export default function EventRow({ event }: { event: Event }) {
         <div style={{ fontSize: 11, color: 'var(--ink-soft)', marginBottom: 6 }}>
           {formatEventDate(event.event_date, event.date_precision)}
           {event.location ? ` · ${event.location}` : ''}
+          {event.address ? ` · ${event.address}` : ''}
           {' · '}
           <strong style={{ color: 'var(--ink)' }}>
             {event.interest_count} interested

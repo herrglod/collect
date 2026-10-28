@@ -2,6 +2,7 @@
 
 export type EventExtraValues = {
   archiveNo: string;
+  address: string;
   timeText: string;
   showPublic: boolean;
   showCollectors: boolean;
@@ -11,6 +12,7 @@ export type EventExtraValues = {
 
 export const emptyExtras: EventExtraValues = {
   archiveNo: '',
+  address: '',
   timeText: '',
   showPublic: false,
   showCollectors: true,
@@ -21,6 +23,7 @@ export const emptyExtras: EventExtraValues = {
 export function extrasPayload(v: EventExtraValues) {
   return {
     archive_no: v.archiveNo.trim() || null,
+    address: v.address.trim() || null,
     time_text: v.timeText.trim() || null,
     show_public: v.showPublic,
     show_collectors: v.showCollectors,
@@ -58,6 +61,15 @@ export default function EventExtraFields({
           onChange={(e) => set({ archiveNo: e.target.value.toUpperCase() })}
           placeholder="H2601"
           maxLength={12}
+        />
+      </div>
+      <div className="field">
+        <label>Address (optional)</label>
+        <input
+          value={value.address}
+          onChange={(e) => set({ address: e.target.value })}
+          placeholder="e.g. Kärntner Straße 12, 1010 Vienna"
+          maxLength={300}
         />
       </div>
       <div className="field">

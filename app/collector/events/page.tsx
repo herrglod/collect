@@ -14,6 +14,7 @@ type Event = {
   image_url: string | null;
   sold_out: boolean;
   catalog_url: string | null;
+  address: string | null;
 };
 
 function getDateParts(value: string | Date, precision: 'exact' | 'month') {
@@ -65,6 +66,7 @@ function EventList({ events, interestedIds }: { events: Event[]; interestedIds: 
                   {ev.location}
                 </div>
               )}
+              {ev.address && <div className="event-row-description">{ev.address}</div>}
               {ev.description && <div className="event-row-description">{ev.description}</div>}
               {ev.catalog_url && (
                 <div className="event-row-description">
@@ -94,14 +96,14 @@ export default async function CollectorEventsPage() {
   if (!session) redirect('/login');
 
   const upcoming = await query<Event>(
-    `SELECT id, title, description, event_date, date_precision, location, image_url, sold_out, catalog_url
+    `SELECT id, title, description, event_date, date_precision, location, image_url, sold_out, catalog_url, address
      FROM public.events
      WHERE show_collectors = true AND event_date >= CURRENT_DATE
      ORDER BY event_date ASC`
   );
 
   const past = await query<Event>(
-    `SELECT id, title, description, event_date, date_precision, location, image_url, sold_out, catalog_url
+    `SELECT id, title, description, event_date, date_precision, location, image_url, sold_out, catalog_url, address
      FROM public.events
      WHERE show_collectors = true AND event_date < CURRENT_DATE
      ORDER BY event_date DESC

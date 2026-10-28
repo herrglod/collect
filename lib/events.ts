@@ -1,6 +1,7 @@
 // Shared parsing for the extra event fields (public website + sold out + catalogue).
 export type EventExtras = {
   archiveNo: string | null;
+  address: string | null;
   timeText: string | null;
   showPublic: boolean;
   showCollectors: boolean;
@@ -15,6 +16,7 @@ export function parseEventExtras(body: any): EventExtrasResult {
   if (rawNo && !/^[A-Z][A-Z0-9]{2,11}$/.test(rawNo)) {
     return { error: 'Archive number must be letters/digits only, e.g. H2601.', value: null };
   }
+  const address = typeof body?.address === 'string' && body.address.trim() ? body.address.trim().slice(0, 300) : null;
   const timeText = typeof body?.time_text === 'string' && body.time_text.trim() ? body.time_text.trim().slice(0, 80) : null;
   const catalogUrl = typeof body?.catalog_url === 'string' && body.catalog_url.trim() ? body.catalog_url.trim() : null;
   if (catalogUrl && !/^https?:\/\//i.test(catalogUrl)) {
@@ -28,6 +30,7 @@ export function parseEventExtras(body: any): EventExtrasResult {
     error: null,
     value: {
       archiveNo: rawNo || null,
+      address,
       timeText,
       showPublic,
       showCollectors: body?.show_collectors !== false,

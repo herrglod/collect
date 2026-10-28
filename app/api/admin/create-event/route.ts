@@ -38,11 +38,11 @@ export async function POST(req: NextRequest) {
   try {
     await queryOne(
       `INSERT INTO public.events (title, description, event_date, date_precision, location, image_url,
-                                  archive_no, time_text, show_public, show_collectors, sold_out, catalog_url)
-       VALUES ($1, $2, $3::date, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+                                  archive_no, time_text, show_public, show_collectors, sold_out, catalog_url, address)
+       VALUES ($1, $2, $3::date, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
        RETURNING id`,
       [title, description, eventDate, datePrecision, location, imageUrl,
-        x.archiveNo, x.timeText, x.showPublic, x.showCollectors, x.soldOut, x.catalogUrl]
+        x.archiveNo, x.timeText, x.showPublic, x.showCollectors, x.soldOut, x.catalogUrl, x.address]
     );
   } catch (err) {
     if (isUniqueViolation(err)) {
