@@ -13,6 +13,9 @@ type Event = {
   location: string | null;
   image_url: string | null;
   interest_count: number;
+  rsvp_yes: number;
+  rsvp_no: number;
+  rsvp_guests: number;
   archive_no: string | null;
   address: string | null;
   time_text: string | null;
@@ -220,6 +223,22 @@ export default function EventRow({ event }: { event: Event }) {
           {event.show_public ? ' · Public (glod.art)' : ''}
           {event.sold_out ? ' · SOLD OUT' : ''}
         </div>
+        {event.archive_no && (
+          <div style={{ fontSize: 11, color: 'var(--ink-soft)', marginBottom: 6, wordBreak: 'break-all' }}>
+            Private invitation link:{' '}
+            <a href={`https://www.glod.art/events/${event.archive_no}-prive`} target="_blank" rel="noopener noreferrer">
+              https://www.glod.art/events/{event.archive_no}-prive
+            </a>
+            {(event.rsvp_yes > 0 || event.rsvp_no > 0) && (
+              <>
+                {' · '}
+                <strong style={{ color: 'var(--ink)' }}>
+                  RSVP: {event.rsvp_yes} yes ({event.rsvp_guests} guests), {event.rsvp_no} no
+                </strong>
+              </>
+            )}
+          </div>
+        )}
         <div style={{ fontWeight: 700, marginBottom: 4 }}>{event.title}</div>
         {event.description && <div style={{ fontSize: 14, whiteSpace: 'pre-wrap' }}>{event.description}</div>}
         {event.image_url && (

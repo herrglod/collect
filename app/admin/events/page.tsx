@@ -16,6 +16,9 @@ type Event = {
   location: string | null;
   image_url: string | null;
   interest_count: number;
+  rsvp_yes: number;
+  rsvp_no: number;
+  rsvp_guests: number;
   archive_no: string | null;
   address: string | null;
   time_text: string | null;
@@ -33,7 +36,10 @@ export default async function AdminEventsPage() {
   const events = await query<Event>(
     `SELECT e.id, e.title, e.description, e.event_date, e.date_precision, e.location, e.image_url,
             e.archive_no, e.address, e.time_text, e.show_public, e.show_collectors, e.sold_out, e.catalog_url,
-            COUNT(ei.id)::int AS interest_count
+            COUNT(ei.id) FILTER (WHERE ei.rsvp IS DISTINCT FROM 'no')::int AS interest_count,
+            COUNT(ei.id) FILTER (WHERE ei.rsvp = 'yes')::int AS rsvp_yes,
+            COUNT(ei.id) FILTER (WHERE ei.rsvp = 'no')::int AS rsvp_no,
+            COALESCE(SUM(ei.guests) FILTER (WHERE ei.rsvp = 'yes'), 0)::int AS rsvp_guests
      FROM public.events e
      LEFT JOIN public.event_interests ei ON ei.event_id = e.id
      GROUP BY e.id
