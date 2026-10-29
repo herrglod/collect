@@ -16,6 +16,9 @@ type Event = {
   rsvp_yes: number;
   rsvp_no: number;
   rsvp_guests: number;
+  ad_yes: number;
+  ad_no: number;
+  ad_guests: number;
   archive_no: string | null;
   address: string | null;
   time_text: string | null;
@@ -234,6 +237,21 @@ export default function EventRow({ event }: { event: Event }) {
                 {' · '}
                 <strong style={{ color: 'var(--ink)' }}>
                   RSVP: {event.rsvp_yes} yes ({event.rsvp_guests} guests), {event.rsvp_no} no
+                </strong>
+              </>
+            )}
+            <br />
+            Campaign (ad) link:{' '}
+            <a href={`https://www.glod.art/events/${event.archive_no}-ad`} target="_blank" rel="noopener noreferrer">
+              https://www.glod.art/events/{event.archive_no}-ad
+            </a>
+            {' '}
+            <span>(add ?utm_source=instagram&amp;utm_campaign=name to track the source)</span>
+            {(event.ad_yes > 0 || event.ad_no > 0) && (
+              <>
+                {' · '}
+                <strong style={{ color: 'var(--ink)' }}>
+                  Ad: {event.ad_yes} yes ({event.ad_guests} guests), {event.ad_no} no
                 </strong>
               </>
             )}

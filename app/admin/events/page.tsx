@@ -19,6 +19,9 @@ type Event = {
   rsvp_yes: number;
   rsvp_no: number;
   rsvp_guests: number;
+  ad_yes: number;
+  ad_no: number;
+  ad_guests: number;
   archive_no: string | null;
   address: string | null;
   time_text: string | null;
@@ -37,9 +40,12 @@ export default async function AdminEventsPage() {
     `SELECT e.id, e.title, e.description, e.event_date, e.date_precision, e.location, e.image_url,
             e.archive_no, e.address, e.time_text, e.show_public, e.show_collectors, e.sold_out, e.catalog_url,
             COUNT(ei.id) FILTER (WHERE ei.rsvp IS DISTINCT FROM 'no')::int AS interest_count,
-            COUNT(ei.id) FILTER (WHERE ei.rsvp = 'yes')::int AS rsvp_yes,
-            COUNT(ei.id) FILTER (WHERE ei.rsvp = 'no')::int AS rsvp_no,
-            COALESCE(SUM(ei.guests) FILTER (WHERE ei.rsvp = 'yes'), 0)::int AS rsvp_guests
+            COUNT(ei.id) FILTER (WHERE ei.rsvp = 'yes' AND ei.source = 'private-invite')::int AS rsvp_yes,
+            COUNT(ei.id) FILTER (WHERE ei.rsvp = 'no' AND ei.source = 'private-invite')::int AS rsvp_no,
+            COALESCE(SUM(ei.guests) FILTER (WHERE ei.rsvp = 'yes' AND ei.source = 'private-invite'), 0)::int AS rsvp_guests,
+            COUNT(ei.id) FILTER (WHERE ei.rsvp = 'yes' AND ei.source LIKE 'ad%')::int AS ad_yes,
+            COUNT(ei.id) FILTER (WHERE ei.rsvp = 'no' AND ei.source LIKE 'ad%')::int AS ad_no,
+            COALESCE(SUM(ei.guests) FILTER (WHERE ei.rsvp = 'yes' AND ei.source LIKE 'ad%'), 0)::int AS ad_guests
      FROM public.events e
      LEFT JOIN public.event_interests ei ON ei.event_id = e.id
      GROUP BY e.id
