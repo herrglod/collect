@@ -3,6 +3,7 @@
 export type EventExtraValues = {
   archiveNo: string;
   address: string;
+  descriptionDe: string;
   timeText: string;
   showPublic: boolean;
   showCollectors: boolean;
@@ -13,6 +14,7 @@ export type EventExtraValues = {
 export const emptyExtras: EventExtraValues = {
   archiveNo: '',
   address: '',
+  descriptionDe: '',
   timeText: '',
   showPublic: false,
   showCollectors: true,
@@ -24,6 +26,7 @@ export function extrasPayload(v: EventExtraValues) {
   return {
     archive_no: v.archiveNo.trim() || null,
     address: v.address.trim() || null,
+    description_de: v.descriptionDe.trim() || null,
     time_text: v.timeText.trim() || null,
     show_public: v.showPublic,
     show_collectors: v.showCollectors,
@@ -61,6 +64,14 @@ export default function EventExtraFields({
           onChange={(e) => set({ archiveNo: e.target.value.toUpperCase() })}
           placeholder="H2601"
           maxLength={12}
+        />
+      </div>
+      <div className="field">
+        <label>Description in German (optional, shown on glod.art in German)</label>
+        <textarea
+          value={value.descriptionDe}
+          onChange={(e) => set({ descriptionDe: e.target.value })}
+          placeholder="Deutsche Beschreibung. Leer = englischer Text wird angezeigt."
         />
       </div>
       <div className="field">

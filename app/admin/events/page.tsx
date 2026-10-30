@@ -24,6 +24,7 @@ type Event = {
   ad_guests: number;
   archive_no: string | null;
   address: string | null;
+  description_de: string | null;
   time_text: string | null;
   show_public: boolean;
   show_collectors: boolean;
@@ -38,7 +39,7 @@ export default async function AdminEventsPage() {
 
   const events = await query<Event>(
     `SELECT e.id, e.title, e.description, e.event_date, e.date_precision, e.location, e.image_url,
-            e.archive_no, e.address, e.time_text, e.show_public, e.show_collectors, e.sold_out, e.catalog_url,
+            e.archive_no, e.address, e.description_de, e.time_text, e.show_public, e.show_collectors, e.sold_out, e.catalog_url,
             COUNT(ei.id) FILTER (WHERE ei.rsvp IS DISTINCT FROM 'no')::int AS interest_count,
             COUNT(ei.id) FILTER (WHERE ei.rsvp = 'yes' AND ei.source = 'private-invite')::int AS rsvp_yes,
             COUNT(ei.id) FILTER (WHERE ei.rsvp = 'no' AND ei.source = 'private-invite')::int AS rsvp_no,

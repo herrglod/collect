@@ -21,6 +21,7 @@ type Event = {
   ad_guests: number;
   archive_no: string | null;
   address: string | null;
+  description_de: string | null;
   time_text: string | null;
   show_public: boolean;
   show_collectors: boolean;
@@ -63,6 +64,7 @@ export default function EventRow({ event }: { event: Event }) {
   const [extras, setExtras] = useState<EventExtraValues>({
     archiveNo: event.archive_no || '',
     address: event.address || '',
+    descriptionDe: event.description_de || '',
     timeText: event.time_text || '',
     showPublic: event.show_public,
     showCollectors: event.show_collectors,

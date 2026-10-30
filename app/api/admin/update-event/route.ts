@@ -41,12 +41,12 @@ export async function POST(req: NextRequest) {
       `UPDATE public.events
        SET title = $2, description = $3, event_date = $4::date, date_precision = $5,
            location = $6, image_url = $7, archive_no = $8, time_text = $9,
-           show_public = $10, show_collectors = $11, sold_out = $12, catalog_url = $13, address = $14,
+           show_public = $10, show_collectors = $11, sold_out = $12, catalog_url = $13, address = $14, description_de = $15,
            updated_at = now()
        WHERE id = $1
        RETURNING id`,
       [eventId, title, description, eventDate, datePrecision, location, imageUrl,
-        x.archiveNo, x.timeText, x.showPublic, x.showCollectors, x.soldOut, x.catalogUrl, x.address]
+        x.archiveNo, x.timeText, x.showPublic, x.showCollectors, x.soldOut, x.catalogUrl, x.address, x.descriptionDe]
     );
   } catch (err) {
     if (isUniqueViolation(err)) {
