@@ -1,5 +1,19 @@
 import Link from 'next/link';
 
+const ACCESS_MAILTO =
+  'mailto:atelier@glod.art?subject=' +
+  encodeURIComponent('Access request – GLOD Collection') +
+  '&body=' +
+  encodeURIComponent(
+    'Hello GLOD team,\n\n' +
+      'I would like to get access to the GLOD Collection portal.\n\n' +
+      'Name:\n' +
+      'I am a: collector / gallery partner (please keep one)\n' +
+      'Artwork(s) I own (title or archive number, e.g. A25042):\n' +
+      'Gallery name (partners only):\n\n' +
+      'Thank you!'
+  );
+
 export default function Home() {
   return (
     <div className="page">
@@ -18,7 +32,7 @@ export default function Home() {
       </Link>
       <p className="subtitle" style={{ marginTop: 28, maxWidth: 520, fontSize: 14 }}>
         Own a GLOD artwork or work with us as a gallery partner, but don&apos;t have access yet? Write to us at{' '}
-        <a href="mailto:atelier@glod.art" style={{ color: 'inherit', textDecoration: 'underline' }}>
+        <a href={ACCESS_MAILTO} style={{ color: 'inherit', textDecoration: 'underline' }}>
           atelier@glod.art
         </a>{' '}
         and we will check and set you up.
