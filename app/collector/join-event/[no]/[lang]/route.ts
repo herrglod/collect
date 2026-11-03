@@ -36,7 +36,7 @@ export async function GET(_req: NextRequest, { params }: { params: { no: string;
     [no]
   );
   if (!ev) return back('notfound');
-  if (ev.sold_out) return back('soldout');
+  // sold out events stay open for collectors (they can still reserve a spot)
   if (!ev.upcoming) return back('past');
 
   await queryOne(

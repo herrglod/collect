@@ -27,12 +27,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true, interested: false });
   }
 
-  const ev = await queryOne<{ sold_out: boolean }>(`SELECT sold_out FROM public.events WHERE id = $1`, [eventId]);
+  // Sold out events stay open for collectors: they can still reserve a spot.
+  const ev = await queryOne<{ id: number }>(`SELECT id FROM public.events WHERE id = $1`, [eventId]);
   if (!ev) {
     return NextResponse.json({ error: 'Event not found.' }, { status: 404 });
-  }
-  if (ev.sold_out) {
-    return NextResponse.json({ error: 'This event is sold out.' }, { status: 409 });
   }
 
   await queryOne(

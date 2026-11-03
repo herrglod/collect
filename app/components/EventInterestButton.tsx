@@ -5,9 +5,13 @@ import { useState } from 'react';
 export default function EventInterestButton({
   eventId,
   initialInterested,
+  labelOff = 'I’m Interested',
+  labelOn = 'Interested',
 }: {
   eventId: number;
   initialInterested: boolean;
+  labelOff?: string;
+  labelOn?: string;
 }) {
   const [interested, setInterested] = useState(initialInterested);
   const [loading, setLoading] = useState(false);
@@ -45,7 +49,7 @@ export default function EventInterestButton({
       <svg width="13" height="13" viewBox="0 0 24 24" fill={interested ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2">
         <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
       </svg>
-      {interested ? 'Interested' : 'I’m Interested'}
+      {interested ? labelOn : labelOff}
     </button>
   );
 }

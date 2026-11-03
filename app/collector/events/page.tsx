@@ -78,8 +78,20 @@ function EventList({ events, interestedIds }: { events: Event[]; interestedIds: 
             </div>
 
             {ev.sold_out ? (
-              <div className="event-row-description" style={{ whiteSpace: 'nowrap', fontWeight: 700 }}>
-                Sold out
+              // Sold out for the public, but collectors can still reserve a spot.
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8, maxWidth: 240, textAlign: 'right' }}>
+                <div className="event-row-description" style={{ fontWeight: 700, margin: 0 }}>
+                  Sold out
+                </div>
+                <div className="event-row-description" style={{ margin: 0 }}>
+                  But as a collector you can still reserve a spot.
+                </div>
+                <EventInterestButton
+                  eventId={ev.id}
+                  initialInterested={interestedIds.has(ev.id)}
+                  labelOff="Reserve a spot"
+                  labelOn="Spot requested"
+                />
               </div>
             ) : (
               <EventInterestButton eventId={ev.id} initialInterested={interestedIds.has(ev.id)} />
